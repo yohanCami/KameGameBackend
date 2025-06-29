@@ -1,0 +1,32 @@
+{
+	"name": "kamegamebackend",
+	"version": "1.0.0",
+	"main": "src/app.ts",
+	"scripts": {
+		"dev": "tsx --watch .",
+		"build": "tsc",
+		"format": "biome format --write",
+		"lint": "biome lint",
+		"lint:fix": "biome lint --write"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/yohanCami/KameGameBackend.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/yohanCami/KameGameBackend/issues"
+	},
+	"homepage": "https://github.com/yohanCami/KameGameBackend#readme",
+	"description": "",
+	"dependencies": {
+		"express": "^5.1.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.0.6",
+		"@types/express": "^5.0.3",
+		"tsx": "^4.20.3",
+		"typescript": "^5.8.3"
+	}
+}
