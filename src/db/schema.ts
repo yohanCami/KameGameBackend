@@ -53,13 +53,23 @@ export const packsRarityEnum = pgEnum("rarity", [
 	"ULTRA RARE",
 ]);
 
-export const packsTable = pgTable("packs", {
-	id: integer().notNull().primaryKey().generatedByDefaultAsIdentity(),
-	name: varchar({ length: 60 }).notNull(),
-	price: integer().notNull(),
-	imageUrl: varchar({ length: 255 }).notNull(),
-	rarity: packsRarityEnum().notNull(),
-});
+export const packsTable = pgTable(
+	"packs",
+	{
+		id: integer().notNull().primaryKey().generatedByDefaultAsIdentity(),
+		name: varchar({ length: 60 }).notNull(),
+		price: integer().notNull(),
+		imageUrl: varchar({ length: 255 }).notNull(),
+		rarity: packsRarityEnum().notNull(),
+	},
+
+	(table) => [
+		index("pack_name_search_index").using(
+			"gin",
+			sql`to_tsvector('english', ${table.name})`,
+		),
+	],
+);
 
 export const inventoriesTable = pgTable(
 	"inventories",

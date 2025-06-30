@@ -1,0 +1,1 @@
+CREATE INDEX "pack_name_search_index" ON "packs" USING gin (to_tsvector('english', "name"));
