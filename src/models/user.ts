@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
 import {
@@ -19,11 +19,11 @@ export const create = async (user: SignupSchema) => {
 };
 
 export const exists = async (name: string): Promise<boolean> => {
-	const user = await db
-		.select({ name: usersTable.name })
+	const result = await db
+		.select({ count: count() })
 		.from(usersTable)
 		.where(eq(usersTable.name, name));
-	return user.length > 0;
+	return result[0].count > 0;
 };
 
 export const find = async (

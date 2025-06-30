@@ -15,6 +15,13 @@
 			"when": 1751297179646,
 			"tag": "0001_seed-cards",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1751301902064,
+			"tag": "0002_keen_ben_urich",
+			"breakpoints": true
 		}
 	]
 }

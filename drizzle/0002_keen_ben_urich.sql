@@ -1,0 +1,1 @@
+CREATE INDEX "card_name_search_index" ON "cards" USING gin (to_tsvector('english', "name"));

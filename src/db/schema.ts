@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
 	boolean,
+	index,
 	integer,
 	pgEnum,
 	pgTable,
@@ -25,15 +27,24 @@ export const cardsAttributeEnum = pgEnum("attribute", [
 	"WIND",
 ]);
 
-export const cardsTable = pgTable("cards", {
-	id: integer().notNull().primaryKey().generatedByDefaultAsIdentity(),
-	name: varchar({ length: 60 }).notNull(),
-	price: integer().notNull(),
-	imageUrl: varchar({ length: 255 }).notNull(),
-	attribute: cardsAttributeEnum().notNull(),
-	stock: integer().notNull().default(0),
-	attack: integer().notNull(),
-});
+export const cardsTable = pgTable(
+	"cards",
+	{
+		id: integer().notNull().primaryKey().generatedByDefaultAsIdentity(),
+		name: varchar({ length: 60 }).notNull(),
+		price: integer().notNull(),
+		imageUrl: varchar({ length: 255 }).notNull(),
+		attribute: cardsAttributeEnum().notNull(),
+		stock: integer().notNull().default(0),
+		attack: integer().notNull(),
+	},
+	(table) => [
+		index("card_name_search_index").using(
+			"gin",
+			sql`to_tsvector('english', ${table.name})`,
+		),
+	],
+);
 
 export const packsRarityEnum = pgEnum("rarity", [
 	"COMMON",

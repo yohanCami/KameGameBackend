@@ -1,7 +1,25 @@
 import type { Request, Response } from "express";
+import { cardSearchSchema } from "../schemas/cards";
+import { errorResponse, HttpStatus, successResponse } from "../utils";
+import { search } from "../models/cards";
 
-export const getAll = (req: Request, res: Response) => {
-	res.send("all cards");
+export const getAll = async (req: Request, res: Response) => {
+	const params = cardSearchSchema.safeParse(req.body);
+	if (!params.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid search params",
+			params.error.issues,
+		);
+		return;
+	}
+
+	const [cards, totalPages] = await search(params.data);
+	successResponse(res, HttpStatus.OK, "", {
+		results: cards,
+		totalPages: totalPages,
+	});
 };
 
 export const getOne = (req: Request, res: Response) => {
