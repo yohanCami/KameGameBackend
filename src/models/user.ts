@@ -1,7 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
-import { UserSelect, type SignupSchema } from "../schemas/user";
+import {
+	AdminSelectSchema,
+	UserSelectSchema,
+	type SignupSchema,
+} from "../schemas/user";
 import * as argon2 from "argon2";
 
 export const create = async (user: SignupSchema) => {
@@ -22,10 +26,24 @@ export const exists = async (name: string): Promise<boolean> => {
 	return user.length > 0;
 };
 
-export const find = async (name: string): Promise<UserSelect | null> => {
+export const find = async (
+	name: string,
+): Promise<UserSelectSchema | AdminSelectSchema | null> => {
 	const user = await db
-		.select({ name: usersTable.name, yugiPesos: usersTable.yugiPesos })
+		.select({
+			name: usersTable.name,
+			yugiPesos: usersTable.yugiPesos,
+			isAdmin: usersTable.isAdmin,
+		})
 		.from(usersTable)
 		.where(eq(usersTable.name, name));
-	return user.length > 0 ? user[0] : null;
+	if (user.length < 1) return null;
+	const u = {
+		name: user[0].name,
+		yugiPesos: user[0].yugiPesos,
+	};
+	if (user[0].isAdmin) {
+		(u as AdminSelectSchema).isAdmin = true;
+	}
+	return u;
 };

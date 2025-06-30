@@ -3,12 +3,14 @@ import { z } from "zod/v4";
 
 import { usersTable } from "../db/schema";
 
-export const userSelectSchema = createSelectSchema(usersTable).omit({
-	isAdmin: true,
+export const adminSelectSchema = createSelectSchema(usersTable).omit({
 	passwordHash: true,
 });
 
-export type UserSelect = z.infer<typeof userSelectSchema>;
+export const userSelectSchema = adminSelectSchema.omit({ isAdmin: true });
+
+export type UserSelectSchema = z.infer<typeof userSelectSchema>;
+export type AdminSelectSchema = z.infer<typeof adminSelectSchema>;
 
 export const signupSchema = createInsertSchema(usersTable, {
 	name: (schema) => schema.min(3),
