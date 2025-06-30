@@ -4,7 +4,7 @@ import { errorResponse, HttpStatus, successResponse } from "../utils";
 import { search } from "../models/cards";
 
 export const getAll = async (req: Request, res: Response) => {
-	const params = cardSearchSchema.safeParse(req.body);
+	const params = cardSearchSchema.safeParse(req.query);
 	if (!params.success) {
 		errorResponse(
 			res,
