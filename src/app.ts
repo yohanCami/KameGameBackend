@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type NextFunction, type Request } from "express";
 import "dotenv/config";
 
 import { usersRouter } from "./routes/user";
@@ -6,6 +6,7 @@ import { cardsRouter } from "./routes/cards";
 import { packsRouter } from "./routes/packs";
 import { cartRouter } from "./routes/cart";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
+import { errorResponse, HttpStatus } from "./utils";
 
 const PORT = process.env.PORT ?? 3000;
 
@@ -17,6 +18,21 @@ app.use("/user", usersRouter);
 app.use("/cards", cardsRouter);
 app.use("/packs", packsRouter);
 app.use("/cart", isAuthenticated, cartRouter);
+
+app.use(
+	(err: Error, _req: Request, res: express.Response, _next: NextFunction) => {
+		console.log("unhandled error:", err);
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"internal server error",
+		);
+	},
+);
+
+app.use((_req, res, _next) => {
+	errorResponse(res, HttpStatus.NOT_FOUND, "not found");
+});
 
 app.listen(PORT, (err) => {
 	if (err) {

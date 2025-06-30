@@ -5,14 +5,13 @@ import type { CardSearchSchema } from "../schemas/cards";
 import { fullTextSearchSql, withPagination } from "./searchHelper";
 
 export const search = async (params: CardSearchSchema) => {
+	const itemName = params.itemName ? params.itemName.trim() : null;
 	const query = db
 		.select()
 		.from(cardsTable)
 		.where(
 			and(
-				params.itemName
-					? fullTextSearchSql(cardsTable.name, params.itemName)
-					: undefined,
+				itemName ? fullTextSearchSql(cardsTable.name, itemName) : undefined,
 				params.cardAttribute
 					? eq(cardsTable.attribute, params.cardAttribute)
 					: undefined,
