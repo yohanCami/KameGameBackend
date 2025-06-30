@@ -47,3 +47,19 @@ export const find = async (
 	}
 	return u;
 };
+
+export const findVerifyingPassword = async (name: string, password: string) => {
+	const user = await db
+		.select()
+		.from(usersTable)
+		.where(eq(usersTable.name, name));
+
+	if (user.length < 1) return null;
+
+	const verified = await argon2.verify(user[0].passwordHash, password);
+	if (verified) {
+		return user[0];
+	} else {
+		return null;
+	}
+};

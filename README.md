@@ -14,6 +14,7 @@ Crear el archivo `.env` con el siguiente contenido:
 
 ```
 DATABASE_URL=postgres://postgres:mypassword@localhost:5432/postgres
+JWT_SECRET=supersecreto
 ```
 
 Aplicar las migraciones:
