@@ -25,7 +25,7 @@ export const cardsAttributeEnum = pgEnum("attribute", [
 	"WIND",
 ]);
 
-export const cardsTable = pgTable("products", {
+export const cardsTable = pgTable("cards", {
 	id: integer().notNull().primaryKey().generatedByDefaultAsIdentity(),
 	name: varchar({ length: 60 }).notNull(),
 	price: integer().notNull(),
@@ -42,7 +42,7 @@ export const packsRarityEnum = pgEnum("rarity", [
 	"ULTRA RARE",
 ]);
 
-export const packsTable = pgTable("products", {
+export const packsTable = pgTable("packs", {
 	id: integer().notNull().primaryKey().generatedByDefaultAsIdentity(),
 	name: varchar({ length: 60 }).notNull(),
 	price: integer().notNull(),

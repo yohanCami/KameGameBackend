@@ -1,11 +1,11 @@
 {
-	"id": "d7f9e81d-cf82-41d5-928a-24fd55710e12",
+	"id": "fb902893-356d-4be0-9a0b-3a784e670d31",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
-		"public.products": {
-			"name": "products",
+		"public.cards": {
+			"name": "cards",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -15,7 +15,7 @@
 					"notNull": true,
 					"identity": {
 						"type": "byDefault",
-						"name": "products_id_seq",
+						"name": "cards_id_seq",
 						"schema": "public",
 						"increment": "1",
 						"startWith": "1",
@@ -37,8 +37,187 @@
 					"primaryKey": false,
 					"notNull": true
 				},
-				"imageUrl": {
-					"name": "imageUrl",
+				"image_url": {
+					"name": "image_url",
+					"type": "varchar(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"attribute": {
+					"name": "attribute",
+					"type": "attribute",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"stock": {
+					"name": "stock",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 0
+				},
+				"attack": {
+					"name": "attack",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.inventories": {
+			"name": "inventories",
+			"schema": "",
+			"columns": {
+				"user_name": {
+					"name": "user_name",
+					"type": "varchar(30)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"card_id": {
+					"name": "card_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"creation_date": {
+					"name": "creation_date",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"value": {
+					"name": "value",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"inventories_user_name_users_name_fk": {
+					"name": "inventories_user_name_users_name_fk",
+					"tableFrom": "inventories",
+					"tableTo": "users",
+					"columnsFrom": ["user_name"],
+					"columnsTo": ["name"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"inventories_card_id_cards_id_fk": {
+					"name": "inventories_card_id_cards_id_fk",
+					"tableFrom": "inventories",
+					"tableTo": "cards",
+					"columnsFrom": ["card_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"inventories_user_name_card_id_pk": {
+					"name": "inventories_user_name_card_id_pk",
+					"columns": ["user_name", "card_id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.pack_cards": {
+			"name": "pack_cards",
+			"schema": "",
+			"columns": {
+				"card_id": {
+					"name": "card_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"pack_id": {
+					"name": "pack_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"pack_cards_card_id_cards_id_fk": {
+					"name": "pack_cards_card_id_cards_id_fk",
+					"tableFrom": "pack_cards",
+					"tableTo": "cards",
+					"columnsFrom": ["card_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"pack_cards_pack_id_cards_id_fk": {
+					"name": "pack_cards_pack_id_cards_id_fk",
+					"tableFrom": "pack_cards",
+					"tableTo": "cards",
+					"columnsFrom": ["pack_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"pack_cards_card_id_pack_id_pk": {
+					"name": "pack_cards_card_id_pack_id_pk",
+					"columns": ["card_id", "pack_id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.packs": {
+			"name": "packs",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "byDefault",
+						"name": "packs_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(60)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"price": {
+					"name": "price",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"image_url": {
+					"name": "image_url",
 					"type": "varchar(255)",
 					"primaryKey": false,
 					"notNull": true
@@ -59,117 +238,6 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.inventories": {
-			"name": "inventories",
-			"schema": "",
-			"columns": {
-				"userName": {
-					"name": "userName",
-					"type": "varchar(30)",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"cardId": {
-					"name": "cardId",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"creationDate": {
-					"name": "creationDate",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": true,
-					"default": "now()"
-				},
-				"value": {
-					"name": "value",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"inventories_userName_users_name_fk": {
-					"name": "inventories_userName_users_name_fk",
-					"tableFrom": "inventories",
-					"tableTo": "users",
-					"columnsFrom": ["userName"],
-					"columnsTo": ["name"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"inventories_cardId_products_id_fk": {
-					"name": "inventories_cardId_products_id_fk",
-					"tableFrom": "inventories",
-					"tableTo": "products",
-					"columnsFrom": ["cardId"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {
-				"inventories_userName_cardId_pk": {
-					"name": "inventories_userName_cardId_pk",
-					"columns": ["userName", "cardId"]
-				}
-			},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
-		"public.pack_cards": {
-			"name": "pack_cards",
-			"schema": "",
-			"columns": {
-				"cardId": {
-					"name": "cardId",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"packId": {
-					"name": "packId",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"pack_cards_cardId_products_id_fk": {
-					"name": "pack_cards_cardId_products_id_fk",
-					"tableFrom": "pack_cards",
-					"tableTo": "products",
-					"columnsFrom": ["cardId"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"pack_cards_packId_products_id_fk": {
-					"name": "pack_cards_packId_products_id_fk",
-					"tableFrom": "pack_cards",
-					"tableTo": "products",
-					"columnsFrom": ["packId"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {
-				"pack_cards_cardId_packId_pk": {
-					"name": "pack_cards_cardId_packId_pk",
-					"columns": ["cardId", "packId"]
-				}
-			},
-			"uniqueConstraints": {},
-			"policies": {},
-			"checkConstraints": {},
-			"isRLSEnabled": false
-		},
 		"public.users": {
 			"name": "users",
 			"schema": "",
@@ -180,21 +248,21 @@
 					"primaryKey": true,
 					"notNull": true
 				},
-				"passwordHash": {
-					"name": "passwordHash",
+				"password_hash": {
+					"name": "password_hash",
 					"type": "varchar(100)",
 					"primaryKey": false,
 					"notNull": true
 				},
-				"isAdmin": {
-					"name": "isAdmin",
+				"is_admin": {
+					"name": "is_admin",
 					"type": "boolean",
 					"primaryKey": false,
 					"notNull": true,
 					"default": false
 				},
-				"yugiPesos": {
-					"name": "yugiPesos",
+				"yugi_pesos": {
+					"name": "yugi_pesos",
 					"type": "integer",
 					"primaryKey": false,
 					"notNull": true,
