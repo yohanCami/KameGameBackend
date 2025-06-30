@@ -29,7 +29,13 @@ export const isAuthenticated = async (
 
 	const token = h.slice(7);
 	const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-	const verifyResult = await jose.jwtVerify(token, secret);
+	let verifyResult;
+	try {
+		verifyResult = await jose.jwtVerify(token, secret);
+	} catch (err) {
+		errorResponse(res, HttpStatus.BAD_REQUEST, "invalid token");
+		return;
+	}
 	const user = jwtSchema.safeParse(verifyResult.payload);
 	if (!user.success) {
 		errorResponse(res, HttpStatus.BAD_REQUEST, "invalid token");
