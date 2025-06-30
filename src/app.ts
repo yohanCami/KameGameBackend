@@ -1,4 +1,6 @@
 import express from "express";
+import "dotenv/config";
+
 import { usersRouter } from "./routes/user";
 import { cardsRouter } from "./routes/cards";
 import { packsRouter } from "./routes/packs";
@@ -8,6 +10,8 @@ import { isAuthenticated } from "./middlewares/isAuthenticated";
 const PORT = process.env.PORT ?? 3000;
 
 const app = express();
+
+app.use(express.json());
 
 app.use("/user", usersRouter);
 app.use("/cards", cardsRouter);
