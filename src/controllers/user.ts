@@ -3,7 +3,7 @@ import { create, exists, find, findVerifyingPassword } from "../models/user";
 import { loginSchema, signupSchema } from "../schemas/user";
 import { errorResponse, HttpStatus, successResponse } from "../utils";
 import * as jose from "jose";
-import { AuthenticatedRequest } from "../middlewares/isAuthenticated";
+import type { AuthenticatedRequest } from "../middlewares/isAuthenticated";
 
 export const signup = async (req: Request, res: Response) => {
 	const user = signupSchema.safeParse(req.body);

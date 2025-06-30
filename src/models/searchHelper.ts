@@ -1,5 +1,5 @@
-import { GetColumnData, sql } from "drizzle-orm";
-import { PgColumn, PgSelect } from "drizzle-orm/pg-core";
+import { type GetColumnData, sql } from "drizzle-orm";
+import type { PgColumn, PgSelect } from "drizzle-orm/pg-core";
 
 export const withPagination = <T extends PgSelect>(
 	qb: T,

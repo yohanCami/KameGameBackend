@@ -1,6 +1,6 @@
 import { createSelectSchema } from "drizzle-zod";
 import { cardsTable } from "../db/schema";
-import { z } from "zod/v4";
+import type { z } from "zod/v4";
 import { searchSchema } from "./search";
 
 const cardSelectSchema = createSelectSchema(cardsTable);

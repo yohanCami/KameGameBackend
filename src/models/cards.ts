@@ -1,7 +1,7 @@
-import { and, count, eq, sql } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { db } from "../db";
 import { cardsTable } from "../db/schema";
-import { CardSearchSchema } from "../schemas/cards";
+import type { CardSearchSchema } from "../schemas/cards";
 import { fullTextSearchSql, withPagination } from "./searchHelper";
 
 export const search = async (params: CardSearchSchema) => {

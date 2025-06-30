@@ -1,10 +1,10 @@
 import { count, eq } from "drizzle-orm";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
-import {
+import type {
 	AdminSelectSchema,
 	UserSelectSchema,
-	type SignupSchema,
+	SignupSchema,
 } from "../schemas/user";
 import * as argon2 from "argon2";
 
