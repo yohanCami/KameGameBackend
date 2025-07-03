@@ -3,7 +3,7 @@ import { cardsTable } from "../db/schema";
 import type { z } from "zod/v4";
 import { searchSchema } from "./search";
 
-const cardSelectSchema = createSelectSchema(cardsTable);
+export const cardSelectSchema = createSelectSchema(cardsTable);
 
 export type CardSelectSchema = z.infer<typeof cardSelectSchema>;
 

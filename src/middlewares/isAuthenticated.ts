@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import { errorResponse, HttpStatus } from "../utils";
 import * as jose from "jose";
-import { jwtSchema, type JWTSchema } from "../schemas/user";
+import { jwtSchema, type JWTPayload } from "../schemas/user";
 
 export interface AuthenticatedRequest extends Request {
-	user?: JWTSchema;
+	user?: JWTPayload;
 }
 
 export const isAuthenticated = async (

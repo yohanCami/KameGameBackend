@@ -1,6 +1,7 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	boolean,
+	check,
 	index,
 	integer,
 	pgEnum,
@@ -82,6 +83,7 @@ export const inventoriesTable = pgTable(
 			.notNull(),
 		creationDate: timestamp().notNull().defaultNow(),
 		value: integer().notNull(),
+		amount: integer().notNull().default(1),
 	},
 	(table) => [primaryKey({ columns: [table.userName, table.cardId] })],
 );
@@ -97,4 +99,45 @@ export const packCardsTable = pgTable(
 			.notNull(),
 	},
 	(table) => [primaryKey({ columns: [table.cardId, table.packId] })],
+);
+
+export const cartProductsTable = pgTable(
+	"cart_products",
+	{
+		id: integer().notNull().primaryKey().generatedAlwaysAsIdentity(),
+		userName: varchar({ length: 30 })
+			.references(() => usersTable.name)
+			.notNull(),
+		cardId: integer()
+			.references(() => cardsTable.id)
+			.unique(),
+		packId: integer()
+			.references(() => packsTable.id)
+			.unique(),
+		quantity: integer().notNull().default(1),
+	},
+	(table) => [
+		check(
+			"cart_product_check",
+			sql`(
+				(${table.cardId} is not null and ${table.packId} is null)
+				or
+				(${table.packId} is not null and ${table.cardId} is null)
+			)`,
+		),
+	],
+);
+
+export const cartProductsRelations = relations(
+	cartProductsTable,
+	({ one }) => ({
+		card: one(cardsTable, {
+			fields: [cartProductsTable.cardId],
+			references: [cardsTable.id],
+		}),
+		pack: one(packsTable, {
+			fields: [cartProductsTable.packId],
+			references: [packsTable.id],
+		}),
+	}),
 );

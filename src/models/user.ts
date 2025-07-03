@@ -1,14 +1,10 @@
 import { count, eq } from "drizzle-orm";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
-import type {
-	AdminSelectSchema,
-	UserSelectSchema,
-	SignupSchema,
-} from "../schemas/user";
+import type { AdminSelect, UserSelect, SignupParams } from "../schemas/user";
 import * as argon2 from "argon2";
 
-export const create = async (user: SignupSchema) => {
+export const create = async (user: SignupParams) => {
 	const passwordHash = await argon2.hash(user.password);
 	const newUser: typeof usersTable.$inferInsert = {
 		name: user.name,
@@ -28,7 +24,7 @@ export const exists = async (name: string): Promise<boolean> => {
 
 export const find = async (
 	name: string,
-): Promise<UserSelectSchema | AdminSelectSchema | null> => {
+): Promise<UserSelect | AdminSelect | null> => {
 	const user = await db
 		.select({
 			name: usersTable.name,
@@ -43,7 +39,7 @@ export const find = async (
 		yugiPesos: user[0].yugiPesos,
 	};
 	if (user[0].isAdmin) {
-		(u as AdminSelectSchema).isAdmin = true;
+		(u as AdminSelect).isAdmin = true;
 	}
 	return u;
 };
@@ -59,7 +55,6 @@ export const findVerifyingPassword = async (name: string, password: string) => {
 	const verified = await argon2.verify(user[0].passwordHash, password);
 	if (verified) {
 		return user[0];
-	} else {
-		return null;
 	}
+	return null;
 };
