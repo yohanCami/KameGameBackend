@@ -1,4 +1,5 @@
 import express, { type NextFunction, type Request } from "express";
+import cors from "cors";
 import "dotenv/config";
 
 import { usersRouter } from "./routes/user";
@@ -12,6 +13,12 @@ const PORT = process.env.PORT ?? 3000;
 
 const app = express();
 
+app.use(
+	cors({
+		origin: process.env.NODE_ENV !== "production" && "*",
+		methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+	}),
+);
 app.use(express.json());
 
 app.use("/user", usersRouter);
