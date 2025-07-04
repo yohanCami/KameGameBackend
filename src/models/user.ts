@@ -1,8 +1,8 @@
+import * as argon2 from "argon2";
 import { count, eq } from "drizzle-orm";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
-import type { AdminSelect, UserSelect, SignupParams } from "../schemas/user";
-import * as argon2 from "argon2";
+import type { AdminSelect, SignupParams, UserSelect } from "../schemas/user";
 
 export const create = async (user: SignupParams) => {
 	const passwordHash = await argon2.hash(user.password);

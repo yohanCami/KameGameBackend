@@ -1,12 +1,12 @@
-import express, { type NextFunction, type Request } from "express";
 import cors from "cors";
+import express, { type NextFunction, type Request } from "express";
 import "dotenv/config";
 
-import { usersRouter } from "./routes/user";
-import { cardsRouter } from "./routes/cards";
-import { packsRouter } from "./routes/packs";
-import { cartRouter } from "./routes/cart";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
+import { cardsRouter } from "./routes/cards";
+import { cartRouter } from "./routes/cart";
+import { packsRouter } from "./routes/packs";
+import { usersRouter } from "./routes/user";
 import { errorResponse, HttpStatus } from "./utils";
 
 const PORT = process.env.PORT ?? 3000;

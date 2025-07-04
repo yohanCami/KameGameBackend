@@ -7,12 +7,12 @@ import {
 	getUserCart,
 	updateCount,
 } from "../models/cart";
-import { errorResponse, HttpStatus, successResponse } from "../utils";
 import {
 	itemAddSchema,
 	itemCountUpdateSchema,
 	itemDeleteSchema,
 } from "../schemas/cart";
+import { errorResponse, HttpStatus, successResponse } from "../utils";
 
 export const getCart = async (req: AuthenticatedRequest, res: Response) => {
 	const username = req.user!.name;

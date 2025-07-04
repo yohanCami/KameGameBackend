@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { errorResponse, HttpStatus } from "../utils";
 import * as jose from "jose";
-import { jwtSchema, type JWTPayload } from "../schemas/user";
+import { type JWTPayload, jwtSchema } from "../schemas/user";
+import { errorResponse, HttpStatus } from "../utils";
 
 export interface AuthenticatedRequest extends Request {
 	user?: JWTPayload;

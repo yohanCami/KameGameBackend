@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from "express";
-import { type AuthenticatedRequest, isAuthenticated } from "./isAuthenticated";
 import { errorResponse, HttpStatus } from "../utils";
+import { type AuthenticatedRequest, isAuthenticated } from "./isAuthenticated";
 
 export const isAdmin = (
 	req: AuthenticatedRequest,

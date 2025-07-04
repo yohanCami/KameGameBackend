@@ -1,6 +1,6 @@
 import express from "express";
-import { isAdmin } from "../middlewares/isAdmin";
 import * as PacksController from "../controllers/packs";
+import { isAdmin } from "../middlewares/isAdmin";
 
 export const packsRouter = express();
 

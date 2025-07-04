@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
+import { search } from "../models/cards";
 import { cardSearchSchema } from "../schemas/cards";
 import { errorResponse, HttpStatus, successResponse } from "../utils";
-import { search } from "../models/cards";
 
 export const getAll = async (req: Request, res: Response) => {
 	const params = cardSearchSchema.safeParse(req.query);

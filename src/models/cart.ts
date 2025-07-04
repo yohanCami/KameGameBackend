@@ -1,5 +1,7 @@
 import { and, eq, or, sql } from "drizzle-orm";
+import type { PgColumn } from "drizzle-orm/pg-core";
 import { db } from "../db";
+import { cartProductsTable } from "../db/schema";
 import type {
 	CartCard,
 	CartPack,
@@ -9,8 +11,6 @@ import type {
 	ManyItemsAdd,
 	OneItemAdd,
 } from "../schemas/cart";
-import { cartProductsTable } from "../db/schema";
-import { PgColumn } from "drizzle-orm/pg-core";
 
 export const getUserCart = async (username: string) => {
 	const products = await db.query.cartProductsTable.findMany({

@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
+import * as jose from "jose";
+import type { AuthenticatedRequest } from "../middlewares/isAuthenticated";
 import { create, exists, find, findVerifyingPassword } from "../models/user";
 import { loginSchema, signupSchema } from "../schemas/user";
 import { errorResponse, HttpStatus, successResponse } from "../utils";
-import * as jose from "jose";
-import type { AuthenticatedRequest } from "../middlewares/isAuthenticated";
 
 export const signup = async (req: Request, res: Response) => {
 	const user = signupSchema.safeParse(req.body);
