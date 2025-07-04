@@ -16,9 +16,9 @@ export type CartPack = z.infer<typeof cartPackSchema>;
 
 export const oneItemAddSchema = z
 	.object({
-		cardId: cardSelectSchema.shape.id.nullish(),
-		packId: packSelectSchema.shape.id.nullish(),
-		quantity: z.number().default(1),
+		cardId: cardSelectSchema.shape.id.optional(),
+		packId: packSelectSchema.shape.id.optional(),
+		quantity: z.number().positive().default(1),
 	})
 	.refine(
 		(data) =>
@@ -37,3 +37,18 @@ export type ManyItemsAdd = z.infer<typeof manyItemsAddSchema>;
 export const itemAddSchema = oneItemAddSchema.or(manyItemsAddSchema);
 
 export type ItemAddParams = z.infer<typeof itemAddSchema>;
+
+export const itemCountUpdateSchema = oneItemAddSchema
+	.omit({ quantity: true })
+	.extend({
+		quantity: z.number().positive(),
+	});
+
+export type ItemCountUpdateParams = z.infer<typeof itemCountUpdateSchema>;
+
+export const itemDeleteSchema = z.object({
+	category: z.enum(["card", "pack"]),
+	id: z.coerce.number(),
+});
+
+export type ItemDeleteParams = z.infer<typeof itemDeleteSchema>;

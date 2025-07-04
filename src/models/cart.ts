@@ -1,13 +1,16 @@
-import { eq } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { db } from "../db";
 import type {
 	CartCard,
 	CartPack,
 	ItemAddParams,
+	ItemCountUpdateParams,
+	ItemDeleteParams,
 	ManyItemsAdd,
 	OneItemAdd,
 } from "../schemas/cart";
 import { cartProductsTable } from "../db/schema";
+import { PgColumn } from "drizzle-orm/pg-core";
 
 export const getUserCart = async (username: string) => {
 	const products = await db.query.cartProductsTable.findMany({
@@ -38,7 +41,6 @@ export const addItemOrItems = async (
 	username: string,
 	itemOrItems: ItemAddParams,
 ) => {
-	// FIXME: if item already in cart, add one to quantity
 	let items = (itemOrItems as ManyItemsAdd).items;
 	if (items === undefined) {
 		items = [itemOrItems as OneItemAdd];
@@ -51,5 +53,55 @@ export const addItemOrItems = async (
 		quantity: item.quantity,
 	}));
 
-	await db.insert(cartProductsTable).values(values);
+	await db
+		.insert(cartProductsTable)
+		.values(values)
+		.onConflictDoUpdate({
+			target: [
+				cartProductsTable.userName,
+				cartProductsTable.cardId,
+				cartProductsTable.packId,
+			],
+			set: { quantity: sql`${cartProductsTable.quantity}+EXCLUDED.quantity` },
+		});
+};
+
+export const updateCount = async (
+	username: string,
+	item: ItemCountUpdateParams,
+) => {
+	let col: PgColumn;
+	let val: number;
+	if (item.cardId !== undefined) {
+		col = cartProductsTable.cardId;
+		val = item.cardId;
+	} else {
+		col = cartProductsTable.packId;
+		val = item.packId as number;
+	}
+	await db
+		.update(cartProductsTable)
+		.set({ quantity: item.quantity })
+		.where(and(eq(cartProductsTable.userName, username), eq(col, val)));
+};
+
+// FIXME both in updateCount and deleteOne, if the id doesn't exist in the cart table, it doesn't
+// show an error. It doesn't do anything either. Consider telling the user that the item isn't in
+// the cart
+export const deleteOne = async (username: string, item: ItemDeleteParams) => {
+	let col: PgColumn;
+	if (item.category === "card") {
+		col = cartProductsTable.cardId;
+	} else {
+		col = cartProductsTable.packId;
+	}
+	await db
+		.delete(cartProductsTable)
+		.where(and(eq(cartProductsTable.userName, username), eq(col, item.id)));
+};
+
+export const clearCart = async (username: string) => {
+	await db
+		.delete(cartProductsTable)
+		.where(eq(cartProductsTable.userName, username));
 };

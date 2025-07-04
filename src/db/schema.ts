@@ -8,6 +8,7 @@ import {
 	pgTable,
 	primaryKey,
 	timestamp,
+	unique,
 	varchar,
 } from "drizzle-orm/pg-core";
 
@@ -108,15 +109,14 @@ export const cartProductsTable = pgTable(
 		userName: varchar({ length: 30 })
 			.references(() => usersTable.name)
 			.notNull(),
-		cardId: integer()
-			.references(() => cardsTable.id)
-			.unique(),
-		packId: integer()
-			.references(() => packsTable.id)
-			.unique(),
+		cardId: integer().references(() => cardsTable.id),
+		packId: integer().references(() => packsTable.id),
 		quantity: integer().notNull().default(1),
 	},
 	(table) => [
+		unique("unique_cart_product")
+			.on(table.userName, table.cardId, table.packId)
+			.nullsNotDistinct(),
 		check(
 			"cart_product_check",
 			sql`(

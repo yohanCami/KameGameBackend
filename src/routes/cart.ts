@@ -5,6 +5,6 @@ export const cartRouter = express();
 
 cartRouter.get("/", CartController.getCart);
 cartRouter.post("/", CartController.addItem);
-cartRouter.patch("/:id", CartController.updateItemCount);
+cartRouter.put("/", CartController.updateItemCount);
 cartRouter.delete("/:category/:id", CartController.deleteItem);
 cartRouter.delete("/", CartController.clear);
