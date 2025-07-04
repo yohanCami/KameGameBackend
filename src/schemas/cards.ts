@@ -1,5 +1,5 @@
-import { createSelectSchema } from "drizzle-zod";
-import type { z } from "zod/v4";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod/v4";
 import { cardsTable } from "../db/schema";
 import { searchSchema } from "./search";
 
@@ -12,3 +12,11 @@ export const cardSearchSchema = searchSchema.extend({
 });
 
 export type CardSearchSchema = z.infer<typeof cardSearchSchema>;
+
+export const getOneSchema = z.object({
+	id: z.coerce.number(),
+});
+
+export const createCardSchema = createInsertSchema(cardsTable);
+
+export type CreateCard = z.infer<typeof createCardSchema>;
