@@ -52,7 +52,10 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 	successResponse(res, HttpStatus.OK, "item(s) added");
 };
 
-export const updateItemCount = async (req: Request, res: Response) => {
+export const updateItemCount = async (
+	req: AuthenticatedRequest,
+	res: Response,
+) => {
 	const params = itemCountUpdateSchema.safeParse(req.body);
 	if (!params.success) {
 		errorResponse(
@@ -78,7 +81,7 @@ export const updateItemCount = async (req: Request, res: Response) => {
 	successResponse(res, HttpStatus.OK, "item updated");
 };
 
-export const deleteItem = async (req: Request, res: Response) => {
+export const deleteItem = async (req: AuthenticatedRequest, res: Response) => {
 	const params = itemDeleteSchema.safeParse(req.params);
 	if (!params.success) {
 		errorResponse(
@@ -104,7 +107,7 @@ export const deleteItem = async (req: Request, res: Response) => {
 	successResponse(res, HttpStatus.OK, "item deleted");
 };
 
-export const clear = async (req: Request, res: Response) => {
+export const clear = async (req: AuthenticatedRequest, res: Response) => {
 	const username = req.user!.name;
 	try {
 		await clearCart(username);
@@ -118,4 +121,8 @@ export const clear = async (req: Request, res: Response) => {
 		return;
 	}
 	successResponse(res, HttpStatus.OK, "cart cleared");
+};
+
+export const buy = async (req: Request, res: Response) => {
+	res.send("buy");
 };
