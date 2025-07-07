@@ -53,6 +53,8 @@ export const addItemOrItems = async (
 		quantity: item.quantity,
 	}));
 
+	// FIXME: if `values` contains items (IDs) that don't exist in the database,
+	// inform the user intead of throwing db exception here
 	await db
 		.insert(cartProductsTable)
 		.values(values)
