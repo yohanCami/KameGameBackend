@@ -25,7 +25,8 @@ export const search = async (params: CardSearchSchema) => {
 };
 
 export const one = async (cardId: number) => {
-	return await db.select().from(cardsTable).where(eq(cardsTable.id, cardId));
+	const card = await db.select().from(cardsTable).where(eq(cardsTable.id, cardId));
+	return card.length > 0 ? card[0] : null;
 };
 
 export const createOne = async (params: CreateCard) => {
