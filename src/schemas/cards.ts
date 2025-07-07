@@ -8,7 +8,7 @@ export const cardSelectSchema = createSelectSchema(cardsTable);
 export type CardSelectSchema = z.infer<typeof cardSelectSchema>;
 
 export const cardSearchSchema = searchSchema.extend({
-	cardAttribute: cardSelectSchema.shape.attribute.nullish(),
+	cardAttribute: cardSelectSchema.shape.attribute.optional(),
 });
 
 export type CardSearchSchema = z.infer<typeof cardSearchSchema>;
