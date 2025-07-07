@@ -153,6 +153,9 @@ curl -X POST http://localhost:3000/user/login -H 'Content-Type: application/json
 }
 ```
 
+> Puede ingresar con el usuario `admin` y la contraseña `admin123` para utilizar una cuenta con
+> permisos de administración
+
 Contraseña incorrecta:
 
 ```sh
