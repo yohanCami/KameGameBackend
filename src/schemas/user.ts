@@ -21,7 +21,7 @@ export type LoginParams = z.infer<typeof loginSchema>;
 export const signupSchema = createInsertSchema(usersTable, {
 	name: (schema) => schema.min(3).regex(/^[a-zA-Z0-9]+$/),
 })
-	.omit({ passwordHash: true, yugiPesos: true })
+	.pick({ name: true })
 	.extend({
 		password: z.string().min(5).max(50),
 	});
