@@ -20,3 +20,13 @@ export const getOneSchema = z.object({
 export const createCardSchema = createInsertSchema(cardsTable);
 
 export type CreateCard = z.infer<typeof createCardSchema>;
+
+export const updateCardSchema = createCardSchema
+	.omit({ id: true })
+	.partial()
+	.refine(
+		(obj) => Object.values(obj).some((v) => v !== undefined),
+		"At least one value required",
+	);
+
+export type UpdateCard = z.infer<typeof updateCardSchema>;

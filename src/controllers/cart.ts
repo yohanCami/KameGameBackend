@@ -67,8 +67,10 @@ export const updateItemCount = async (
 		return;
 	}
 	const username = req.user!.name;
+
+	let updated: boolean;
 	try {
-		await updateCount(username, params.data);
+		updated = await updateCount(username, params.data);
 	} catch (err) {
 		console.log("failed to update cart item:", err);
 		errorResponse(
@@ -78,7 +80,12 @@ export const updateItemCount = async (
 		);
 		return;
 	}
-	successResponse(res, HttpStatus.OK, "item updated");
+
+	if (updated) {
+		successResponse(res, HttpStatus.OK, "item updated");
+	} else {
+		errorResponse(res, HttpStatus.NOT_FOUND, "item not found in the cart");
+	}
 };
 
 export const deleteItem = async (req: AuthenticatedRequest, res: Response) => {
@@ -92,9 +99,11 @@ export const deleteItem = async (req: AuthenticatedRequest, res: Response) => {
 		);
 		return;
 	}
+
 	const username = req.user!.name;
+	let updated: boolean;
 	try {
-		await deleteOne(username, params.data);
+		updated = await deleteOne(username, params.data);
 	} catch (err) {
 		console.log("failed to update cart item:", err);
 		errorResponse(
@@ -104,7 +113,12 @@ export const deleteItem = async (req: AuthenticatedRequest, res: Response) => {
 		);
 		return;
 	}
-	successResponse(res, HttpStatus.OK, "item deleted");
+
+	if (updated) {
+		successResponse(res, HttpStatus.OK, "item deleted");
+	} else {
+		errorResponse(res, HttpStatus.NOT_FOUND, "item not found in cart");
+	}
 };
 
 export const clear = async (req: AuthenticatedRequest, res: Response) => {

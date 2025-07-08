@@ -81,15 +81,14 @@ export const updateCount = async (
 		col = cartProductsTable.packId;
 		val = item.packId as number;
 	}
-	await db
+	const changed = await db
 		.update(cartProductsTable)
 		.set({ quantity: item.quantity })
-		.where(and(eq(cartProductsTable.userName, username), eq(col, val)));
+		.where(and(eq(cartProductsTable.userName, username), eq(col, val)))
+		.returning({ id: cartProductsTable.id });
+	return changed.length > 0;
 };
 
-// FIXME both in updateCount and deleteOne, if the id doesn't exist in the cart table, it doesn't
-// show an error. It doesn't do anything either. Consider telling the user that the item isn't in
-// the cart
 export const deleteOne = async (username: string, item: ItemDeleteParams) => {
 	let col: PgColumn;
 	if (item.category === "card") {
@@ -97,9 +96,11 @@ export const deleteOne = async (username: string, item: ItemDeleteParams) => {
 	} else {
 		col = cartProductsTable.packId;
 	}
-	await db
+	const changed = await db
 		.delete(cartProductsTable)
-		.where(and(eq(cartProductsTable.userName, username), eq(col, item.id)));
+		.where(and(eq(cartProductsTable.userName, username), eq(col, item.id)))
+		.returning({ id: cartProductsTable.id });
+	return changed.length > 0;
 };
 
 export const clearCart = async (username: string) => {

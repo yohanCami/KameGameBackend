@@ -428,7 +428,39 @@ curl -X POST http://localhost:3000/cards -H 'Authorization: Bearer <token>' -H '
 }
 ```
 
-- `PUT /cards/<id>`
+- `PATCH /cards/<id>`
+
+**Input:** Espera recibir el id de la carta en `<id>` y los nuevos datos de la carta en el `body`
+con el siguiente formato:
+
+```typescript
+type UpdateCard = {
+    name?: string | undefined;
+    price?: number | undefined;
+    imageUrl?: string | undefined;
+    attribute?: "DARK" | "DIVINE" | "EARTH" | "FIRE" | "LIGHT" | "WATER" | "WIND" | undefined;
+    stock?: number | undefined;
+    attack?: number | undefined;
+}
+```
+
+**Ejemplos:**
+
+```sh
+curl -X PATCH http://localhost:3000/cards/22910685 -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d '{
+  "name": "changed"
+  }'
+```
+
+```json
+{
+  "error": null,
+  "data": null,
+  "message": "card updated",
+  "status": 200
+}
+```
+
 - `DELETE /cards/<id>`
 
 ### /packs

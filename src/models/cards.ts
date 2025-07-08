@@ -1,7 +1,11 @@
 import { and, count, eq } from "drizzle-orm";
 import { db } from "../db";
 import { cardsTable } from "../db/schema";
-import type { CardSearchSchema, CreateCard } from "../schemas/cards";
+import type {
+	CardSearchSchema,
+	CreateCard,
+	UpdateCard,
+} from "../schemas/cards";
 import { fullTextSearchSql, withPagination } from "./searchHelper";
 
 export const search = async (params: CardSearchSchema) => {
@@ -34,4 +38,13 @@ export const one = async (cardId: number) => {
 
 export const createOne = async (params: CreateCard) => {
 	await db.insert(cardsTable).values(params);
+};
+
+export const update = async (cardId: number, params: UpdateCard) => {
+	const changed = await db
+		.update(cardsTable)
+		.set(params)
+		.where(eq(cardsTable.id, cardId))
+		.returning({ id: cardsTable.id });
+	return changed.length > 0;
 };
