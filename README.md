@@ -192,7 +192,7 @@ curl http://localhost:3000/user -H 'Authorization: Bearer <token>'
   },
   "message": "",
   "status": 200
-}⏎
+}
 ```
 
 Con un token incorrecto:
@@ -304,7 +304,7 @@ curl 'http://localhost:3000/cards?page=2&itemsPerPage=1&itemName=king&cardAttrib
         "attack": 500
       }
     ],
-    "totalPages": 205
+    "totalPages": 2
   },
   "message": "",
   "status": 200
@@ -322,7 +322,7 @@ curl http://localhost:3000/cards?itemName=king&cardAttribute=FIRE
   "error": null,
   "data": {
     "results": [],
-    "totalPages": 11
+    "totalPages": 0
   },
   "message": "",
   "status": 200
