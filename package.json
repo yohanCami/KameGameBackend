@@ -30,12 +30,14 @@
 		"drizzle-zod": "^0.8.2",
 		"express": "^5.1.0",
 		"jose": "^6.0.11",
+		"morgan": "^1.10.0",
 		"pg": "^8.16.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6",
 		"@types/cors": "^2.8.19",
 		"@types/express": "^5.0.3",
+		"@types/morgan": "^1.9.10",
 		"@types/pg": "^8.15.4",
 		"drizzle-kit": "^0.31.4",
 		"tsx": "^4.20.3",

@@ -1,5 +1,6 @@
 import cors from "cors";
 import express, { type NextFunction, type Request } from "express";
+import morgan from "morgan";
 import "dotenv/config";
 
 import { isAuthenticated } from "./middlewares/isAuthenticated";
@@ -19,6 +20,7 @@ app.use(
 		methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 	}),
 );
+app.use(morgan('dev'))
 app.use(express.json());
 
 app.use("/user", usersRouter);
