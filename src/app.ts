@@ -20,7 +20,7 @@ app.use(
 		methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 	}),
 );
-app.use(morgan('dev'))
+app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/user", usersRouter);
