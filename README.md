@@ -27,7 +27,7 @@ Aplicar las migraciones:
 npx drizzle-kit migrate
 ```
 
-> Nota: este comando crea/actualiza la estructura de la base de datos. Para más información: [ver esta guía](https://orm.drizzle.team/docs/guides/postgresql-local-setup)
+> Nota: este comando crea/actualiza la estructura de la base de datos. Para más información, ver [esta guía](https://orm.drizzle.team/docs/guides/postgresql-local-setup)
 
 ### Servidor
 
