@@ -19,6 +19,8 @@ DATABASE_URL=postgres://postgres:mypassword@localhost:5432/postgres
 JWT_SECRET=supersecreto
 ```
 
+> Nota: se necesita este archivo para que el backend como encontrar y loggear en la base de datos, y para definir el JSON Web Token para gestionar de forma segura la autenticación de usuarios.
+
 Aplicar las migraciones:
 
 ```
