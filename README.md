@@ -10,6 +10,8 @@ Iniciar una instancia de postgres con docker
 docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
 ```
 
+> Nota: el daemon de Docker debe estár corriendo antes de ejecutar este comando. Para más información, ver [esta guia](https://docs.docker.com/engine/daemon/start/).
+
 Crear el archivo `.env` con el siguiente contenido:
 
 ```
@@ -60,8 +62,8 @@ Todas las rutas tienen el mismo formato para la respuesta:
 
 ```typescript
 type SignupParams = {
-    name: string;
-    password: string;
+	name: string
+	password: string
 }
 ```
 
@@ -75,10 +77,10 @@ curl -X POST http://localhost:3000/user/signup -H 'Content-Type: application/jso
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "sign up successfull",
-  "status": 201
+	"error": null,
+	"data": null,
+	"message": "sign up successfull",
+	"status": 201
 }
 ```
 
@@ -90,21 +92,19 @@ curl -X POST http://localhost:3000/user/signup -H 'Content-Type: application/jso
 
 ```json
 {
-  "data": null,
-  "message": "error parsing signup details",
-  "error": [
-    {
-      "origin": "string",
-      "code": "too_small",
-      "minimum": 5,
-      "inclusive": true,
-      "path": [
-        "password"
-      ],
-      "message": "Too small: expected string to have >=5 characters"
-    }
-  ],
-  "status": 400
+	"data": null,
+	"message": "error parsing signup details",
+	"error": [
+		{
+			"origin": "string",
+			"code": "too_small",
+			"minimum": 5,
+			"inclusive": true,
+			"path": ["password"],
+			"message": "Too small: expected string to have >=5 characters"
+		}
+	],
+	"status": 400
 }
 ```
 
@@ -116,10 +116,10 @@ curl -X POST http://localhost:3000/user/signup -H 'Content-Type: application/jso
 
 ```json
 {
-  "data": null,
-  "message": "user already exists",
-  "error": true,
-  "status": 400
+	"data": null,
+	"message": "user already exists",
+	"error": true,
+	"status": 400
 }
 ```
 
@@ -129,8 +129,8 @@ curl -X POST http://localhost:3000/user/signup -H 'Content-Type: application/jso
 
 ```typescript
 type LoginParams = {
-    name: string;
-    password: string;
+	name: string
+	password: string
 }
 ```
 
@@ -144,12 +144,12 @@ curl -X POST http://localhost:3000/user/login -H 'Content-Type: application/json
 
 ```json
 {
-  "error": null,
-  "data": {
-    "accessToken": "<token>"
-  },
-  "message": "login successfull",
-  "status": 200
+	"error": null,
+	"data": {
+		"accessToken": "<token>"
+	},
+	"message": "login successfull",
+	"status": 200
 }
 ```
 
@@ -164,10 +164,10 @@ curl -X POST http://localhost:3000/user/login -H 'Content-Type: application/json
 
 ```json
 {
-  "data": null,
-  "message": "incorrect username or password",
-  "error": true,
-  "status": 400
+	"data": null,
+	"message": "incorrect username or password",
+	"error": true,
+	"status": 400
 }
 ```
 
@@ -185,13 +185,13 @@ curl http://localhost:3000/user -H 'Authorization: Bearer <token>'
 
 ```json
 {
-  "error": null,
-  "data": {
-    "name": "Pedro",
-    "yugiPesos": 0
-  },
-  "message": "",
-  "status": 200
+	"error": null,
+	"data": {
+		"name": "Pedro",
+		"yugiPesos": 0
+	},
+	"message": "",
+	"status": 200
 }
 ```
 
@@ -203,10 +203,10 @@ curl http://localhost:3000/user -H 'Authorization: Bearer <token incorrecto>'
 
 ```json
 {
-  "data": null,
-  "message": "invalid token",
-  "error": true,
-  "status": 400
+	"data": null,
+	"message": "invalid token",
+	"error": true,
+	"status": 400
 }
 ```
 
@@ -218,10 +218,10 @@ curl http://localhost:3000/user
 
 ```json
 {
-  "data": null,
-  "message": "not authenticated, please login to access this resource",
-  "error": true,
-  "status": 401
+	"data": null,
+	"message": "not authenticated, please login to access this resource",
+	"error": true,
+	"status": 401
 }
 ```
 
@@ -233,13 +233,20 @@ curl http://localhost:3000/user
 
 ```typescript
 type CardSearchSchema = {
-    page: number;
-    itemsPerPage: number;
-    itemName?: string | undefined;
-    cardAttribute?: "DARK" | "DIVINE" | "EARTH" | "FIRE" | "LIGHT" | "WATER" | "WIND" | undefined;
+	page: number
+	itemsPerPage: number
+	itemName?: string | undefined
+	cardAttribute?:
+		| "DARK"
+		| "DIVINE"
+		| "EARTH"
+		| "FIRE"
+		| "LIGHT"
+		| "WATER"
+		| "WIND"
+		| undefined
 }
 ```
-
 
 > Por defecto, `page=1` y `itemsPerPage=20`, todos los parámetros son opcionales
 
@@ -319,13 +326,13 @@ curl http://localhost:3000/cards?itemName=king&cardAttribute=FIRE
 
 ```json
 {
-  "error": null,
-  "data": {
-    "results": [],
-    "totalPages": 0
-  },
-  "message": "",
-  "status": 200
+	"error": null,
+	"data": {
+		"results": [],
+		"totalPages": 0
+	},
+	"message": "",
+	"status": 200
 }
 ```
 
@@ -343,18 +350,18 @@ curl http://localhost:3000/cards/22910685
 
 ```json
 {
-  "error": null,
-  "data": {
-    "id": 22910685,
-    "name": "Green Phantom King",
-    "price": 7000,
-    "imageUrl": "https://ygocards.blob.core.windows.net/cards/22910685.jpg",
-    "attribute": "EARTH",
-    "stock": 49,
-    "attack": 500
-  },
-  "message": "",
-  "status": 200
+	"error": null,
+	"data": {
+		"id": 22910685,
+		"name": "Green Phantom King",
+		"price": 7000,
+		"imageUrl": "https://ygocards.blob.core.windows.net/cards/22910685.jpg",
+		"attribute": "EARTH",
+		"stock": 49,
+		"attack": 500
+	},
+	"message": "",
+	"status": 200
 }
 ```
 
@@ -366,10 +373,10 @@ curl http://localhost:3000/cards/123
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "",
+	"status": 200
 }
 ```
 
@@ -379,13 +386,13 @@ curl http://localhost:3000/cards/123
 
 ```typescript
 type CreateCard = {
-    name: string;
-    price: number;
-    imageUrl: string;
-    attribute: "DARK" | "DIVINE" | "EARTH" | "FIRE" | "LIGHT" | "WATER" | "WIND";
-    attack: number;
-    id?: number | undefined;
-    stock?: number | undefined;
+	name: string
+	price: number
+	imageUrl: string
+	attribute: "DARK" | "DIVINE" | "EARTH" | "FIRE" | "LIGHT" | "WATER" | "WIND"
+	attack: number
+	id?: number | undefined
+	stock?: number | undefined
 }
 ```
 
@@ -399,10 +406,10 @@ curl -X POST http://localhost:3000/cards -H 'Authorization: Bearer <token no adm
 
 ```json
 {
-  "data": null,
-  "message": "unauthorized",
-  "error": true,
-  "status": 403
+	"data": null,
+	"message": "unauthorized",
+	"error": true,
+	"status": 403
 }
 ```
 
@@ -421,10 +428,10 @@ curl -X POST http://localhost:3000/cards -H 'Authorization: Bearer <token>' -H '
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "card created",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "card created",
+	"status": 200
 }
 ```
 
@@ -435,12 +442,20 @@ con el siguiente formato:
 
 ```typescript
 type UpdateCard = {
-    name?: string | undefined;
-    price?: number | undefined;
-    imageUrl?: string | undefined;
-    attribute?: "DARK" | "DIVINE" | "EARTH" | "FIRE" | "LIGHT" | "WATER" | "WIND" | undefined;
-    stock?: number | undefined;
-    attack?: number | undefined;
+	name?: string | undefined
+	price?: number | undefined
+	imageUrl?: string | undefined
+	attribute?:
+		| "DARK"
+		| "DIVINE"
+		| "EARTH"
+		| "FIRE"
+		| "LIGHT"
+		| "WATER"
+		| "WIND"
+		| undefined
+	stock?: number | undefined
+	attack?: number | undefined
 }
 ```
 
@@ -454,10 +469,10 @@ curl -X PATCH http://localhost:3000/cards/22910685 -H 'Authorization: Bearer <to
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "card updated",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "card updated",
+	"status": 200
 }
 ```
 
@@ -479,13 +494,13 @@ curl http://localhost:3000/cart -H 'Authorization: Bearer <token>'
 
 ```json
 {
-  "error": null,
-  "data": {
-    "cards": [],
-    "packs": []
-  },
-  "message": "",
-  "status": 200
+	"error": null,
+	"data": {
+		"cards": [],
+		"packs": []
+	},
+	"message": "",
+	"status": 200
 }
 ```
 
@@ -497,24 +512,24 @@ curl http://localhost:3000/cart -H 'Authorization: Bearer <token>'
 
 ```json
 {
-  "error": null,
-  "data": {
-    "cards": [
-      {
-        "id": 22910685,
-        "name": "Green Phantom King",
-        "price": 7000,
-        "imageUrl": "https://ygocards.blob.core.windows.net/cards/22910685.jpg",
-        "attribute": "EARTH",
-        "stock": 49,
-        "attack": 500,
-        "quantity": 1
-      }
-    ],
-    "packs": []
-  },
-  "message": "",
-  "status": 200
+	"error": null,
+	"data": {
+		"cards": [
+			{
+				"id": 22910685,
+				"name": "Green Phantom King",
+				"price": 7000,
+				"imageUrl": "https://ygocards.blob.core.windows.net/cards/22910685.jpg",
+				"attribute": "EARTH",
+				"stock": 49,
+				"attack": 500,
+				"quantity": 1
+			}
+		],
+		"packs": []
+	},
+	"message": "",
+	"status": 200
 }
 ```
 
@@ -523,17 +538,19 @@ curl http://localhost:3000/cart -H 'Authorization: Bearer <token>'
 **Input:** Espera recibir los items a agregar al carrito en el `body` con el siguiente formato:
 
 ```typescript
-type ItemAddParams = {
-    quantity: number;
-    cardId?: number | undefined;
-    packId?: number | undefined;
-} | {
-    items: {
-        quantity: number;
-        cardId?: number | undefined;
-        packId?: number | undefined;
-    }[];
-}
+type ItemAddParams =
+	| {
+			quantity: number
+			cardId?: number | undefined
+			packId?: number | undefined
+	  }
+	| {
+			items: {
+				quantity: number
+				cardId?: number | undefined
+				packId?: number | undefined
+			}[]
+	  }
 ```
 
 > Es decir, puede recibir un único item o una lista de items a agregar.
@@ -551,25 +568,25 @@ curl -X POST http://localhost:3000/cart -H 'Authorization: Bearer <token>' -H 'C
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "item(s) added",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "item(s) added",
+	"status": 200
 }
 ```
 
 - `PUT /cart`
 
-Esta ruta actualiza la cantidad 
+Esta ruta actualiza la cantidad
 
 **Input:** Espera recibir el id del item y la cantidad de ese item en el carrito con el siguiente
 formato:
 
 ```typescript
 type ItemCountUpdateParams = {
-    quantity: number;
-    cardId?: number | undefined;
-    packId?: number | undefined;
+	quantity: number
+	cardId?: number | undefined
+	packId?: number | undefined
 }
 ```
 
@@ -583,10 +600,10 @@ curl -X PUT http://localhost:3000/cart -H 'Authorization: Bearer <token>' -H 'Co
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "item updated",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "item updated",
+	"status": 200
 }
 ```
 
@@ -603,10 +620,10 @@ curl -X DELETE http://localhost:3000/cart/card/22910685 -H 'Authorization: Beare
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "item deleted",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "item deleted",
+	"status": 200
 }
 ```
 
@@ -620,10 +637,10 @@ curl -X DELETE http://localhost:3000/cart -H 'Authorization: Bearer <token>'
 
 ```json
 {
-  "error": null,
-  "data": null,
-  "message": "cart cleared",
-  "status": 200
+	"error": null,
+	"data": null,
+	"message": "cart cleared",
+	"status": 200
 }
 ```
 
