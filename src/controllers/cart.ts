@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import type { AuthenticatedRequest } from "../middlewares/isAuthenticated";
 import {
 	addItemOrItems,
+	buyItemsInCart,
 	clearCart,
 	deleteOne,
 	getUserCart,
@@ -137,6 +138,26 @@ export const clear = async (req: AuthenticatedRequest, res: Response) => {
 	successResponse(res, HttpStatus.OK, "cart cleared");
 };
 
-export const buy = async (req: Request, res: Response) => {
-	res.send("buy");
+export const buy = async (req: AuthenticatedRequest, res: Response) => {
+	const username = req.user!.name;
+	let bought: [boolean, string | null];
+	try {
+		bought = await buyItemsInCart(username);
+	} catch (err) {
+		console.log("failed to process purchase:", err);
+		errorResponse(
+			res, HttpStatus.INTERNAL_SERVER_ERROR, "failed to process purchase"
+		);
+		return;
+	}
+
+	if (bought[0]) {
+		successResponse(res, HttpStatus.OK, "purchase completed")
+	} else {
+		if (bought[1] === null) {
+			errorResponse(res, HttpStatus.BAD_REQUEST, "the cart is empty, nothing to buy")
+		} else {
+			errorResponse(res, HttpStatus.BAD_REQUEST, bought[1])
+		}
+	}
 };

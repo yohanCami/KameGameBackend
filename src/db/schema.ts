@@ -104,6 +104,20 @@ export const packCardsTable = pgTable(
 	(table) => [primaryKey({ columns: [table.cardId, table.packId] })]
 )
 
+export const packCardsRelations = relations(
+	packCardsTable,
+	({ one }) => ({
+		card: one(cardsTable, {
+			fields: [packCardsTable.cardId],
+			references: [cardsTable.id],
+		}),
+		pack: one(packsTable, {
+			fields: [packCardsTable.packId],
+			references: [packsTable.id],
+		}),
+	})
+)
+
 export const cartProductsTable = pgTable(
 	"cart_products",
 	{
