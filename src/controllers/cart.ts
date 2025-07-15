@@ -146,18 +146,24 @@ export const buy = async (req: AuthenticatedRequest, res: Response) => {
 	} catch (err) {
 		console.log("failed to process purchase:", err);
 		errorResponse(
-			res, HttpStatus.INTERNAL_SERVER_ERROR, "failed to process purchase"
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"failed to process purchase",
 		);
 		return;
 	}
 
 	if (bought[0]) {
-		successResponse(res, HttpStatus.OK, "purchase completed")
+		successResponse(res, HttpStatus.OK, "purchase completed");
 	} else {
 		if (bought[1] === null) {
-			errorResponse(res, HttpStatus.BAD_REQUEST, "the cart is empty, nothing to buy")
+			errorResponse(
+				res,
+				HttpStatus.BAD_REQUEST,
+				"the cart is empty, nothing to buy",
+			);
 		} else {
-			errorResponse(res, HttpStatus.BAD_REQUEST, bought[1])
+			errorResponse(res, HttpStatus.BAD_REQUEST, bought[1]);
 		}
 	}
 };

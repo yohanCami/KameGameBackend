@@ -1,59 +1,59 @@
 // models/packs.ts
-import { db } from "../db"
-import { packsTable } from "../db/schema"
-import { and, count, eq } from "drizzle-orm"
-import { packSearchSchema, PackSearchSchema } from "../schemas/packs"
-import { fullTextSearchSql, withPagination } from "./searchHelper"
+import { db } from "../db";
+import { packsTable } from "../db/schema";
+import { and, count, eq } from "drizzle-orm";
+import { packSearchSchema, PackSearchSchema } from "../schemas/packs";
+import { fullTextSearchSql, withPagination } from "./searchHelper";
 
 export const search = async (params: PackSearchSchema) => {
-	const safeParams = packSearchSchema.parse(params)
+	const safeParams = packSearchSchema.parse(params);
 
-	const itemName = safeParams.itemName ? safeParams.itemName.trim() : null
+	const itemName = safeParams.itemName ? safeParams.itemName.trim() : null;
 	const whereCondition = and(
 		itemName ? fullTextSearchSql(packsTable.name, itemName) : undefined,
 		safeParams.packRarity
 			? eq(packsTable.rarity, safeParams.packRarity)
-			: undefined
-	)
+			: undefined,
+	);
 
-	const query = db.select().from(packsTable).where(whereCondition).$dynamic()
+	const query = db.select().from(packsTable).where(whereCondition).$dynamic();
 	const packs = await withPagination(
 		query,
 		safeParams.page,
-		safeParams.itemsPerPage
-	)
+		safeParams.itemsPerPage,
+	);
 
 	const packsCount = await db
 		.select({ count: count() })
 		.from(packsTable)
-		.where(whereCondition)
+		.where(whereCondition);
 
 	const totalPages = Math.ceil(
-		packsCount[0].count / (safeParams.itemsPerPage || 20)
-	)
+		packsCount[0].count / (safeParams.itemsPerPage || 20),
+	);
 
-	return [packs, totalPages]
-}
+	return [packs, totalPages];
+};
 
 export const getAllPacks = async () => {
-	return db.select().from(packsTable)
-}
+	return db.select().from(packsTable);
+};
 
 export const getPackById = async (id: number) => {
 	const result = await db
 		.select()
 		.from(packsTable)
-		.where(eq(packsTable.id, id))
+		.where(eq(packsTable.id, id));
 
-	return result[0] ?? null
-}
+	return result[0] ?? null;
+};
 
 export const createPack = async (data: {
-	name: string
-	price: number
-	imageUrl: string
-	rarity: typeof packsTable.$inferSelect.rarity
-	discount?: number
+	name: string;
+	price: number;
+	imageUrl: string;
+	rarity: typeof packsTable.$inferSelect.rarity;
+	discount?: number;
 }) => {
 	const result = await db
 		.insert(packsTable)
@@ -64,30 +64,30 @@ export const createPack = async (data: {
 			rarity: data.rarity,
 			discount: data.discount ?? 0,
 		})
-		.returning()
+		.returning();
 
-	return result[0]
-}
+	return result[0];
+};
 
 export const updatePackById = async (
 	id: number,
 	data: Partial<{
-		name: string
-		price: number
-		imageUrl: string
-		rarity: typeof packsTable.$inferSelect.rarity
-		discount: number
-	}>
+		name: string;
+		price: number;
+		imageUrl: string;
+		rarity: typeof packsTable.$inferSelect.rarity;
+		discount: number;
+	}>,
 ) => {
 	const result = await db
 		.update(packsTable)
 		.set(data)
 		.where(eq(packsTable.id, id))
-		.returning()
+		.returning();
 
-	return result[0] ?? null
-}
+	return result[0] ?? null;
+};
 
 export const deletePackById = async (id: number) => {
-	await db.delete(packsTable).where(eq(packsTable.id, id))
-}
+	await db.delete(packsTable).where(eq(packsTable.id, id));
+};
