@@ -13,5 +13,5 @@ export const fullTextSearchSql = <T extends PgColumn>(
 	tableColumn: T,
 	value: GetColumnData<T, "raw">,
 ) => {
-	return sql`to_tsvector('english', ${tableColumn}) @@ to_tsquery('english', ${value})`;
+	return sql`to_tsvector('english', ${tableColumn}) @@ websearch_to_tsquery('english', ${value})`;
 };
