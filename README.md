@@ -32,7 +32,7 @@ Para más información: [ver esta guía](https://orm.drizzle.team/docs/guides/po
 Instalar las dependencias:
 
 ```
-npm i
+npm install
 ```
 
 Iniciar el servidor:
