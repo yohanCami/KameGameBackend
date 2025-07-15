@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm"
 import {
 	boolean,
 	check,
@@ -10,14 +10,15 @@ import {
 	timestamp,
 	unique,
 	varchar,
-} from "drizzle-orm/pg-core";
+	real,
+} from "drizzle-orm/pg-core"
 
 export const usersTable = pgTable("users", {
 	name: varchar({ length: 30 }).notNull().primaryKey(),
 	passwordHash: varchar({ length: 100 }).notNull(),
 	isAdmin: boolean().notNull().default(false),
 	yugiPesos: integer().notNull().default(0),
-});
+})
 
 export const cardsAttributeEnum = pgEnum("attribute", [
 	"DARK",
@@ -27,7 +28,7 @@ export const cardsAttributeEnum = pgEnum("attribute", [
 	"LIGHT",
 	"WATER",
 	"WIND",
-]);
+])
 
 export const cardsTable = pgTable(
 	"cards",
@@ -43,17 +44,17 @@ export const cardsTable = pgTable(
 	(table) => [
 		index("card_name_search_index").using(
 			"gin",
-			sql`to_tsvector('english', ${table.name})`,
+			sql`to_tsvector('english', ${table.name})`
 		),
-	],
-);
+	]
+)
 
 export const packsRarityEnum = pgEnum("rarity", [
 	"COMMON",
 	"RARE",
 	"SUPER RARE",
 	"ULTRA RARE",
-]);
+])
 
 export const packsTable = pgTable(
 	"packs",
@@ -63,15 +64,16 @@ export const packsTable = pgTable(
 		price: integer().notNull(),
 		imageUrl: varchar({ length: 255 }).notNull(),
 		rarity: packsRarityEnum().notNull(),
+		discount: real().default(0),
 	},
 
 	(table) => [
 		index("pack_name_search_index").using(
 			"gin",
-			sql`to_tsvector('english', ${table.name})`,
+			sql`to_tsvector('english', ${table.name})`
 		),
-	],
-);
+	]
+)
 
 export const inventoriesTable = pgTable(
 	"inventories",
@@ -86,8 +88,8 @@ export const inventoriesTable = pgTable(
 		value: integer().notNull(),
 		amount: integer().notNull().default(1),
 	},
-	(table) => [primaryKey({ columns: [table.userName, table.cardId] })],
-);
+	(table) => [primaryKey({ columns: [table.userName, table.cardId] })]
+)
 
 export const packCardsTable = pgTable(
 	"pack_cards",
@@ -99,8 +101,8 @@ export const packCardsTable = pgTable(
 			.references(() => cardsTable.id)
 			.notNull(),
 	},
-	(table) => [primaryKey({ columns: [table.cardId, table.packId] })],
-);
+	(table) => [primaryKey({ columns: [table.cardId, table.packId] })]
+)
 
 export const cartProductsTable = pgTable(
 	"cart_products",
@@ -123,10 +125,10 @@ export const cartProductsTable = pgTable(
 				(${table.cardId} is not null and ${table.packId} is null)
 				or
 				(${table.packId} is not null and ${table.cardId} is null)
-			)`,
+			)`
 		),
-	],
-);
+	]
+)
 
 export const cartProductsRelations = relations(
 	cartProductsTable,
@@ -139,5 +141,5 @@ export const cartProductsRelations = relations(
 			fields: [cartProductsTable.packId],
 			references: [packsTable.id],
 		}),
-	}),
-);
+	})
+)

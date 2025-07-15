@@ -1,21 +1,21 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
 export const getAll = (req: Request, res: Response) => {
-	res.send("all packs");
-};
+	res.send("all packs")
+}
 
 export const getOne = (req: Request, res: Response) => {
-	res.send("one pack");
-};
+	res.send("one pack")
+}
 
 export const create = (req: Request, res: Response) => {
-	res.send("create pack");
-};
+	res.send("create pack")
+}
 
 export const updateOne = (req: Request, res: Response) => {
-	res.send("update pack");
-};
+	res.send("update pack")
+}
 
 export const deleteOne = (req: Request, res: Response) => {
-	res.send("delete pack");
-};
+	res.send("delete pack")
+}
