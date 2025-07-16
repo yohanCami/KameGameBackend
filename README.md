@@ -482,6 +482,160 @@ curl -X PATCH http://localhost:3000/cards/22910685 -H 'Authorization: Bearer <to
 
 ### /packs
 
+- `GET /packs`
+
+**Input:** Puede recibir parámetros en la URL con la siguiente forma:
+
+```ts
+type PackSearchSchema = {
+	page: number
+	itemsPerPage: number
+	itemName?: string
+	rarity?: "COMMON" | "RARE" | "SUPER RARE" | "ULTRA RARE"
+}
+```
+
+> Por defecto, `page=1` y `itemsPerPage=20`. Todos los parámetros son opcionales.
+
+**Ejemplos:**
+
+```sh
+curl http://localhost:3000/packs
+```
+
+```json
+{
+	"error": null,
+	"data": {
+		"results": [
+			{
+				"id": 1,
+				"name": "Rare Beasts",
+				"price": 5000,
+				"imageUrl": "https://example.com/pack1.png",
+				"rarity": "rare",
+				"discount": 0.15
+			}
+		],
+		"totalPages": 1
+	},
+	"message": "",
+	"status": 200
+}
+```
+
+---
+
+- `GET /packs/<id>`
+
+**Input:** el ID del paquete en `<id>`
+
+```sh
+curl http://localhost:3000/packs/1
+```
+
+```json
+{
+	"error": null,
+	"data": {
+		"id": 1,
+		"name": "Rare Beasts",
+		"price": 5000,
+		"imageUrl": "https://example.com/pack1.png",
+		"rarity": "rare",
+		"discount": 0.15
+	},
+	"message": "",
+	"status": 200
+}
+```
+
+---
+
+- `POST /packs`
+
+**Input:** Necesita el header `Authorization` con el token de un usuario administrador. El `body` debe tener la siguiente forma:
+
+```ts
+type CreatePack = {
+	name: string
+	price: number
+	imageUrl: string
+	rarity: "COMMON" | "RAR" | "SUPER RARE" | "ULTRA RARE"
+	discount?: number
+}
+```
+
+**Ejemplo:**
+
+```sh
+curl -X POST http://localhost:3000/packs -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d '{
+  "name": "Epic Warriors",
+  "price": 8000,
+  "imageUrl": "https://example.com/pack.png",
+  "rarity": "ultra-rare"
+}'
+```
+
+```json
+{
+	"error": null,
+	"data": null,
+	"message": "pack created",
+	"status": 200
+}
+```
+
+---
+
+- `PATCH /packs/<id>`
+
+**Input:** Espera el ID del pack en la URL y un body parcial con los campos a actualizar:
+
+```ts
+type UpdatePack = {
+	name?: string
+	price?: number
+	imageUrl?: string
+	rarity?: "common" | "rare" | "super-rare" | "ultra-rare"
+	discount?: number
+}
+```
+
+**Ejemplo:**
+
+```sh
+curl -X PATCH http://localhost:3000/packs/1 -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d '{ "discount": 0.3 }'
+```
+
+```json
+{
+	"error": null,
+	"data": null,
+	"message": "pack updated",
+	"status": 200
+}
+```
+
+---
+
+- `DELETE /packs/<id>`
+
+**Input:** Espera recibir el ID del pack en la URL:
+
+```sh
+curl -X DELETE http://localhost:3000/packs/1 -H 'Authorization: Bearer <token>'
+```
+
+```json
+{
+	"error": null,
+	"data": null,
+	"message": "pack deleted",
+	"status": 200
+}
+```
+
 ### /cart
 
 Todas las rutas de `/cart` requieren el header `Authorization` con el token del usuario logueado.
