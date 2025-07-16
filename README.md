@@ -801,3 +801,67 @@ curl -X DELETE http://localhost:3000/cart -H 'Authorization: Bearer <token>'
 ```
 
 - `GET /cart/buy`
+
+Realiza la compra de los items en el carrito
+
+**Ejemplos:**
+
+Carrito vacío
+
+```sh
+curl http://localhost:3000/cart/buy -H 'Authorization: Bearer <token>'
+```
+
+```json
+{
+    "data": null,
+    "message": "the cart is empty, nothing to buy",
+    "error": true,
+    "status":400
+}
+````
+
+Usuario sin suficientes YugiPesos:
+
+```sh
+curl http://localhost:3000/cart/buy -H 'Authorization: Bearer <token>'
+```
+
+```json
+{
+	"data": null,
+	"message": "You don't have enough balance. Need at least 2917900 YP",
+	"error": true,
+	"status": 400
+}
+```
+
+Carrito con cartas sin suficiente stock:
+
+```sh
+curl http://localhost:3000/cart/buy -H 'Authorization: Bearer <token>'
+```
+
+```json
+{
+	"data": null,
+	"message": "the cart includes cards that don't have enough stock",
+	"error": true,
+	"status": 400
+}
+```
+
+Compra exitosa:
+
+```sh
+curl http://localhost:3000/cart/buy -H 'Authorization: Bearer <token>'
+```
+
+```json
+{
+	"error": null,
+	"data": null,
+	"message": "purchase completed",
+	"status": 200
+}
+```
