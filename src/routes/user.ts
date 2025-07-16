@@ -7,3 +7,4 @@ export const usersRouter = express();
 usersRouter.post("/signup", UserController.signup);
 usersRouter.post("/login", UserController.login);
 usersRouter.get("/", isAuthenticated, UserController.me);
+usersRouter.patch("/funds", isAuthenticated, UserController.updateFunds);

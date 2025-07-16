@@ -35,3 +35,9 @@ export const jwtSchema = adminSelectSchema
 	});
 
 export type JWTPayload = z.infer<typeof jwtSchema>;
+
+export const addFundsSchema = z.object({
+	amount: z.number().positive()
+});
+
+export type AddFundsParams = z.infer<typeof addFundsSchema>;

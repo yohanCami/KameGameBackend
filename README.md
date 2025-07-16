@@ -819,7 +819,7 @@ curl http://localhost:3000/cart/buy -H 'Authorization: Bearer <token>'
     "error": true,
     "status":400
 }
-````
+```
 
 Usuario sin suficientes YugiPesos:
 
