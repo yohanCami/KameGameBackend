@@ -2,7 +2,12 @@
 import { db } from "../db";
 import { packsTable } from "../db/schema";
 import { and, count, eq } from "drizzle-orm";
-import { packSearchSchema, PackSearchSchema } from "../schemas/packs";
+import {
+	CreatePackSchema,
+	packSearchSchema,
+	PackSearchSchema,
+	UpdatePackSchema,
+} from "../schemas/packs";
 import { fullTextSearchSql, withPagination } from "./searchHelper";
 
 export const search = async (params: PackSearchSchema) => {
@@ -44,44 +49,18 @@ export const one = async (id: number) => {
 	return result[0] ?? null;
 };
 
-export const createPack = async (data: {
-	name: string;
-	price: number;
-	imageUrl: string;
-	rarity: typeof packsTable.$inferSelect.rarity;
-	discount?: number;
-}) => {
-	const result = await db
-		.insert(packsTable)
-		.values({
-			name: data.name,
-			price: data.price,
-			imageUrl: data.imageUrl,
-			rarity: data.rarity,
-			discount: data.discount ?? 0,
-		})
-		.returning();
-
-	return result[0];
+export const createOne = async (params: CreatePackSchema) => {
+	await db.insert(packsTable).values(params);
 };
 
-export const updatePackById = async (
-	id: number,
-	data: Partial<{
-		name: string;
-		price: number;
-		imageUrl: string;
-		rarity: typeof packsTable.$inferSelect.rarity;
-		discount: number;
-	}>,
-) => {
-	const result = await db
+export const update = async (packId: number, params: UpdatePackSchema) => {
+	const changed = await db
 		.update(packsTable)
-		.set(data)
-		.where(eq(packsTable.id, id))
-		.returning();
+		.set(params)
+		.where(eq(packsTable.id, packId))
+		.returning({ id: packsTable.id });
 
-	return result[0] ?? null;
+	return changed.length > 0;
 };
 
 export const deletePackById = async (id: number) => {

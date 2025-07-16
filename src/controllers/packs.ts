@@ -1,12 +1,17 @@
 import type { Request, Response } from "express";
 import {
 	one,
-	createPack,
-	updatePackById,
 	deletePackById,
+	update,
+	createOne,
 	search,
 } from "../models/packs";
-import { packSearchSchema, getOneSchema } from "../schemas/packs";
+import {
+	createPackSchema,
+	updatePackSchema,
+	getOneSchema,
+	packSearchSchema,
+} from "../schemas/packs";
 import { errorResponse, HttpStatus, successResponse } from "../utils";
 
 export const getAll = async (req: Request, res: Response) => {
@@ -48,32 +53,71 @@ export const getOne = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: Request, res: Response) => {
+	const params = createPackSchema.safeParse(req.body);
+	if (!params.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid pack creation params",
+			params.error.issues,
+		);
+		return;
+	}
+
 	try {
-		const pack = await createPack(req.body);
-		successResponse(res, HttpStatus.OK, "Pack created", pack);
+		await createOne(params.data);
+		successResponse(res, HttpStatus.OK, "pack created");
 	} catch (err) {
+		console.error("failed to create pack", err);
 		errorResponse(
 			res,
 			HttpStatus.INTERNAL_SERVER_ERROR,
-			"Failed to create pack",
+			"failed to create pack",
 		);
 	}
 };
 
 export const updateOne = async (req: Request, res: Response) => {
-	const id = Number(req.params.id);
-	if (isNaN(id)) {
-		errorResponse(res, HttpStatus.BAD_REQUEST, "Invalid ID");
+	const idCheck = getOneSchema.safeParse(req.params);
+	if (!idCheck.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid pack id param",
+			idCheck.error.issues,
+		);
 		return;
 	}
 
-	const updated = await updatePackById(id, req.body);
-	if (!updated) {
-		errorResponse(res, HttpStatus.NOT_FOUND, "Pack not found");
+	const params = updatePackSchema.safeParse(req.body);
+	if (!params.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid pack update params",
+			params.error.issues,
+		);
 		return;
 	}
 
-	successResponse(res, HttpStatus.OK, "Pack updated", id);
+	let updated: boolean;
+	try {
+		updated = await update(idCheck.data.id, params.data);
+	} catch (err) {
+		console.error("failed to update pack", err);
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"failed to update pack",
+		);
+		return;
+	}
+
+	if (updated) {
+		successResponse(res, HttpStatus.OK, "pack updated");
+	} else {
+		errorResponse(res, HttpStatus.NOT_FOUND, "pack not found");
+	}
 };
 
 export const deleteOne = async (req: Request, res: Response) => {
