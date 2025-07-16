@@ -227,6 +227,47 @@ curl http://localhost:3000/user
 }
 ```
 
+- `PATCH /user/funds`
+
+**Input:** Espera recibir el token en el header y que el body de la petición contenga la cantidad a recargar:
+
+> La cantidad debe ser positiva
+
+**Ejemplos**
+
+Token correcto, usuario con 3000 yugiPesos actuales:
+
+```sh
+curl -X PATCH http://localhost:3000/user/funds -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d '{"amount": 1000}'
+```
+
+```json
+{
+	"error":null,
+	"data": {
+		"name":"sebas",
+		"yugiPesos":4000
+	},
+	"message":"funds updated",
+	"status":200
+}
+```
+
+Token incorrecto:
+
+```sh
+curl -X PATCH http://localhost:3000/user/funds -H 'Authorization: Bearer <token incorrecto>' -H 'Content-Type: application/json' -d '{"amount": 1000}'
+```
+
+```json
+{
+	"data":null,
+	"message":"invalid token",
+	"error":true,
+	"status":400
+}
+```
+
 ### /cards
 
 - `GET /cards`
