@@ -4,6 +4,7 @@ import { db } from "../db";
 import {
 	cardsTable,
 	cartProductsTable,
+	inventoriesTable,
 	packCardsTable,
 	usersTable,
 } from "../db/schema";
@@ -127,10 +128,6 @@ export const buyItemsInCart = async (
 			where: eq(cartProductsTable.userName, username),
 		});
 
-		if (cartItems.length === 0) {
-			return [false, null];
-		}
-
 		// calculate total price of the cart
 		let totalPrice = 0;
 		for (const item of cartItems) {
@@ -153,8 +150,12 @@ export const buyItemsInCart = async (
 
 		// lista de todas las cartas por comprar (las que estén explicitamente en el carrito junto
 		// a las que estén asociadas a los paquetes de los carritos)
-		const cardsToBuy: { id: number; quantityToBuy: number; stock: number }[] =
-			[];
+		const cardsToBuy: {
+			id: number;
+			quantityToBuy: number;
+			stock: number;
+			price: number;
+		}[] = [];
 
 		const cartCards = cartItems.filter((i) => i.cardId !== null);
 		const cartPacks = cartItems.filter((i) => i.packId !== null);
@@ -168,6 +169,7 @@ export const buyItemsInCart = async (
 				id: c.cardId as number,
 				quantityToBuy: c.quantity,
 				stock: c.card!.stock,
+				price: c.card!.price,
 			})),
 		);
 
@@ -182,7 +184,12 @@ export const buyItemsInCart = async (
 				id: card.cardId,
 				quantityToBuy: pack.quantity,
 				stock: card.card.stock,
+				price: card.card.price,
 			});
+		}
+
+		if (cardsToBuy.length === 0) {
+			return [false, null];
 		}
 
 		// check if in stock
@@ -193,20 +200,36 @@ export const buyItemsInCart = async (
 		}
 
 		// subtract quantity from cards stock
-		const updated = await updateMany(tx, cardsToBuy);
+		await updateMany(tx, cardsToBuy);
 
-		if (updated) {
-			// subtract total from user's balance
-			await tx
-				.update(usersTable)
-				.set({ yugiPesos: sql`${usersTable.yugiPesos} - ${totalPrice}` })
-				.where(eq(usersTable.name, username));
+		// subtract total from user's balance
+		await tx
+			.update(usersTable)
+			.set({ yugiPesos: sql`${usersTable.yugiPesos} - ${totalPrice}` })
+			.where(eq(usersTable.name, username));
 
-			// clear cart
-			await clearCart(username);
+		// add cards to user's inventory
+		const inventoryValues = [];
+		for (const card of cardsToBuy) {
+			inventoryValues.push({
+				userName: username,
+				cardId: card.id,
+				amount: card.quantityToBuy,
+				value: card.price,
+			});
 		}
+		await tx
+			.insert(inventoriesTable)
+			.values(inventoryValues)
+			.onConflictDoUpdate({
+				target: [inventoriesTable.userName, inventoriesTable.cardId],
+				set: { amount: sql`${inventoriesTable.amount}+EXCLUDED.amount` },
+			});
 
-		return [updated, null];
+		// clear cart
+		await clearCart(username);
+
+		return [true, null];
 	});
 };
 
@@ -214,10 +237,6 @@ const updateMany = async (
 	tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
 	items: { id: number; quantityToBuy: number }[],
 ) => {
-	if (items.length === 0) {
-		return false;
-	}
-
 	const sqlChunks: SQL[] = [];
 	const ids: number[] = [];
 
@@ -238,6 +257,4 @@ const updateMany = async (
 		.update(cardsTable)
 		.set({ stock: finalSql })
 		.where(inArray(cardsTable.id, ids));
-
-	return true;
 };
