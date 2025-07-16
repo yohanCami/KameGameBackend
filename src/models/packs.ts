@@ -35,11 +35,7 @@ export const search = async (params: PackSearchSchema) => {
 	return [packs, totalPages];
 };
 
-export const getAllPacks = async () => {
-	return db.select().from(packsTable);
-};
-
-export const getPackById = async (id: number) => {
+export const one = async (id: number) => {
 	const result = await db
 		.select()
 		.from(packsTable)
