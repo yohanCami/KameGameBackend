@@ -7,7 +7,7 @@
 Iniciar una instancia de postgres con docker
 
 ```console
-$ docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
+$&zwnj; docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
 
 # si el container ya está siendo utilizado, utilice este comando
 $ docker start drizzle-postgres
