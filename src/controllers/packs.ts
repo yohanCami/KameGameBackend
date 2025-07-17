@@ -17,17 +17,18 @@ import { errorResponse, HttpStatus, successResponse } from "../utils";
 export const getAll = async (req: Request, res: Response) => {
 	const parsed = packSearchSchema.safeParse(req.query);
 	if (!parsed.success) {
-		return errorResponse(
+		errorResponse(
 			res,
 			HttpStatus.BAD_REQUEST,
 			"invalid search params",
 			parsed.error.issues,
 		);
+		return;
 	}
 
 	const [packs, totalPages] = await search(parsed.data);
 
-	return successResponse(res, HttpStatus.OK, "", {
+	successResponse(res, HttpStatus.OK, "", {
 		results: packs,
 		totalPages,
 	});
@@ -36,20 +37,22 @@ export const getAll = async (req: Request, res: Response) => {
 export const getOne = async (req: Request, res: Response) => {
 	const parsed = getOneSchema.safeParse(req.params);
 	if (!parsed.success) {
-		return errorResponse(
+		errorResponse(
 			res,
 			HttpStatus.BAD_REQUEST,
 			"invalid params",
 			parsed.error.issues,
 		);
+		return;
 	}
 
 	const pack = await one(parsed.data.id);
 	if (!pack) {
-		return errorResponse(res, HttpStatus.NOT_FOUND, "Pack not found");
+		errorResponse(res, HttpStatus.NOT_FOUND, "Pack not found");
+		return;
 	}
 
-	return successResponse(res, HttpStatus.OK, "", pack);
+	successResponse(res, HttpStatus.OK, "", pack);
 };
 
 export const create = async (req: Request, res: Response) => {
