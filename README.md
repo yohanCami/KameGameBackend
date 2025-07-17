@@ -6,8 +6,11 @@
 
 Iniciar una instancia de postgres con docker
 
-```
-docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
+```console
+$ docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
+
+# si el container ya está siendo utilizado, utilice este comando
+$ docker start drizzle-postgres
 ```
 
 > Nota: el daemon de Docker debe estár corriendo antes de ejecutar este comando. Para más información, ver [esta guia](https://docs.docker.com/engine/daemon/start/).
@@ -243,13 +246,13 @@ curl -X PATCH http://localhost:3000/user/funds -H 'Authorization: Bearer <token>
 
 ```json
 {
-	"error":null,
+	"error": null,
 	"data": {
-		"name":"sebas",
-		"yugiPesos":4000
+		"name": "sebas",
+		"yugiPesos": 4000
 	},
-	"message":"funds updated",
-	"status":200
+	"message": "funds updated",
+	"status": 200
 }
 ```
 
@@ -261,10 +264,10 @@ curl -X PATCH http://localhost:3000/user/funds -H 'Authorization: Bearer <token 
 
 ```json
 {
-	"data":null,
-	"message":"invalid token",
-	"error":true,
-	"status":400
+	"data": null,
+	"message": "invalid token",
+	"error": true,
+	"status": 400
 }
 ```
 
@@ -855,10 +858,10 @@ curl http://localhost:3000/cart/buy -H 'Authorization: Bearer <token>'
 
 ```json
 {
-    "data": null,
-    "message": "the cart is empty, nothing to buy",
-    "error": true,
-    "status":400
+	"data": null,
+	"message": "the cart is empty, nothing to buy",
+	"error": true,
+	"status": 400
 }
 ```
 
