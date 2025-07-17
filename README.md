@@ -6,18 +6,18 @@
 
 Iniciar una instancia de postgres con docker
 
-```console
-$&zwnj; docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
+```sh
+docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
 
 # si el container ya está siendo utilizado, utilice este comando
-$ docker start drizzle-postgres
+docker start drizzle-postgres
 ```
 
 > Nota: el daemon de Docker debe estár corriendo antes de ejecutar este comando. Para más información, ver [esta guia](https://docs.docker.com/engine/daemon/start/).
 
 Crear el archivo `.env` con el siguiente contenido:
 
-```
+```sh
 DATABASE_URL=postgres://postgres:mypassword@localhost:5432/postgres
 JWT_SECRET=supersecreto
 ```
@@ -26,7 +26,7 @@ JWT_SECRET=supersecreto
 
 Aplicar las migraciones:
 
-```
+```sh
 npx drizzle-kit migrate
 ```
 
@@ -36,13 +36,13 @@ npx drizzle-kit migrate
 
 Instalar las dependencias:
 
-```
+```sh
 npm install
 ```
 
 Iniciar el servidor:
 
-```
+```sh
 npm run dev
 ```
 
@@ -50,7 +50,7 @@ npm run dev
 
 Todas las rutas tienen el mismo formato para la respuesta:
 
-```
+```sh
 {
   error: true | any | null;
   data: any | null;
