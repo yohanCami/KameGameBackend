@@ -39,8 +39,9 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 		return;
 	}
 	const username = req.user!.name;
+	let result: [boolean, { cards: number[]; packs: number[] } | null];
 	try {
-		await addItemOrItems(username, params.data);
+		result = await addItemOrItems(username, params.data);
 	} catch (err) {
 		console.log("failed to add item(s):", err);
 		errorResponse(
@@ -50,7 +51,20 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 		);
 		return;
 	}
-	successResponse(res, HttpStatus.OK, "item(s) added");
+
+	if (result[0]) {
+		successResponse(res, HttpStatus.OK, "item(s) added");
+		return;
+	}
+
+	errorResponse(
+		res,
+		HttpStatus.BAD_REQUEST,
+		"some items don't exist in the database",
+		{
+			itemsNotFound: result[1],
+		},
+	);
 };
 
 export const updateItemCount = async (

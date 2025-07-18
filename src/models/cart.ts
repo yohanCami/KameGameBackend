@@ -6,6 +6,7 @@ import {
 	cartProductsTable,
 	inventoriesTable,
 	packCardsTable,
+	packsTable,
 	usersTable,
 } from "../db/schema";
 import type {
@@ -47,7 +48,7 @@ export const getUserCart = async (username: string) => {
 export const addItemOrItems = async (
 	username: string,
 	itemOrItems: ItemAddParams,
-) => {
+): Promise<[boolean, { cards: number[]; packs: number[] } | null]> => {
 	let items = (itemOrItems as ManyItemsAdd).items;
 	if (items === undefined) {
 		items = [itemOrItems as OneItemAdd];
@@ -60,8 +61,12 @@ export const addItemOrItems = async (
 		quantity: item.quantity,
 	}));
 
-	// FIXME: if `values` contains items (IDs) that don't exist in the database,
-	// inform the user intead of throwing db exception here
+	const itemsExistResult = await itemsExist(values);
+
+	if (itemsExistResult.cards.length > 0 || itemsExistResult.packs.length > 0) {
+		return [false, itemsExistResult];
+	}
+
 	await db
 		.insert(cartProductsTable)
 		.values(values)
@@ -73,6 +78,8 @@ export const addItemOrItems = async (
 			],
 			set: { quantity: sql`${cartProductsTable.quantity}+EXCLUDED.quantity` },
 		});
+
+	return [true, null];
 };
 
 export const updateCount = async (
@@ -257,4 +264,39 @@ const updateMany = async (
 		.update(cardsTable)
 		.set({ stock: finalSql })
 		.where(inArray(cardsTable.id, ids));
+};
+
+// retorna los items en `items` que no existen en la base de datos
+const itemsExist = async (items: { cardId?: number; packId?: number }[]) => {
+	const cardIds = [];
+	const packIds = [];
+
+	for (const item of items) {
+		if (item.cardId !== undefined) {
+			cardIds.push(item.cardId);
+		}
+		if (item.packId !== undefined) {
+			packIds.push(item.packId);
+		}
+	}
+
+	const cardsInDB = await db
+		.select({ id: cardsTable.id })
+		.from(cardsTable)
+		.where(inArray(cardsTable.id, cardIds));
+	const packsInDB = await db
+		.select({ id: packsTable.id })
+		.from(packsTable)
+		.where(inArray(packsTable.id, packIds));
+
+	const dbCards = new Set(cardsInDB.map((c) => c.id));
+	const dbPacks = new Set(packsInDB.map((c) => c.id));
+
+	const itemCards = new Set(cardIds);
+	const itemPacks = new Set(packIds);
+
+	return {
+		cards: Array.from(itemCards.difference(dbCards)),
+		packs: Array.from(itemPacks.difference(dbPacks)),
+	};
 };
