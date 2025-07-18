@@ -1,7 +1,13 @@
 import type { Request, Response } from "express";
 import * as jose from "jose";
 import type { AuthenticatedRequest } from "../middlewares/isAuthenticated";
-import { create, exists, find, findVerifyingPassword, addFunds } from "../models/user";
+import {
+	create,
+	exists,
+	find,
+	findVerifyingPassword,
+	addFunds,
+} from "../models/user";
 import { loginSchema, signupSchema, addFundsSchema } from "../schemas/user";
 import { errorResponse, HttpStatus, successResponse } from "../utils";
 
@@ -104,7 +110,7 @@ export const updateFunds = async (req: AuthenticatedRequest, res: Response) => {
 			res,
 			HttpStatus.BAD_REQUEST,
 			"invalid funds amount",
-			amount.error.issues
+			amount.error.issues,
 		);
 		return;
 	}
@@ -121,7 +127,11 @@ export const updateFunds = async (req: AuthenticatedRequest, res: Response) => {
 
 		successResponse(res, HttpStatus.OK, "funds updated", updatedUser);
 	} catch {
-		errorResponse(res, HttpStatus.INTERNAL_SERVER_ERROR, "error while adding funds");
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"error while adding funds",
+		);
 		return;
 	}
 };

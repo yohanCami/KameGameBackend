@@ -2,7 +2,12 @@ import * as argon2 from "argon2";
 import { count, eq, sql } from "drizzle-orm";
 import { db } from "../db";
 import { usersTable } from "../db/schema";
-import type { AdminSelect, SignupParams, UserSelect, AddFundsParams } from "../schemas/user";
+import type {
+	AdminSelect,
+	SignupParams,
+	UserSelect,
+	AddFundsParams,
+} from "../schemas/user";
 
 export const create = async (user: SignupParams) => {
 	const passwordHash = await argon2.hash(user.password);
@@ -59,29 +64,32 @@ export const findVerifyingPassword = async (name: string, password: string) => {
 	return null;
 };
 
-export const addFunds = async (name: string, amount: number): Promise<UserSelect | null> => {
+export const addFunds = async (
+	name: string,
+	amount: number,
+): Promise<UserSelect | null> => {
 	const userExists = await exists(name);
 	if (!userExists) {
 		return null;
 	}
 
 	const updated = await db
-	.update(usersTable)
-	.set({yugiPesos: sql`${usersTable.yugiPesos} + ${amount}`})
-	.where(eq(usersTable.name, name))
-	.returning({
-		name: usersTable.name,
-		yugiPesos: usersTable.yugiPesos,
-		isAdmin: usersTable.isAdmin
-	});
+		.update(usersTable)
+		.set({ yugiPesos: sql`${usersTable.yugiPesos} + ${amount}` })
+		.where(eq(usersTable.name, name))
+		.returning({
+			name: usersTable.name,
+			yugiPesos: usersTable.yugiPesos,
+			isAdmin: usersTable.isAdmin,
+		});
 
 	if (updated.length === 0) return null;
 	const user = updated[0];
-	
+
 	const result = {
 		name: user.name,
-		yugiPesos: user.yugiPesos
-	}
+		yugiPesos: user.yugiPesos,
+	};
 
 	if (user.isAdmin) {
 		(result as AdminSelect).isAdmin = true;
