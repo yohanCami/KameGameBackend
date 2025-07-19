@@ -3,7 +3,6 @@ import { z } from 'zod/v4';
 import { inventoriesTable } from '../db/schema';
 import { searchSchema } from './search';
 import { cardSelectSchema } from './cards';
-import { userSelectSchema } from './user';
 
 export const inventorySelectSchema = createSelectSchema(inventoriesTable);
 
