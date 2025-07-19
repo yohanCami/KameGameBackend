@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import type { AuthenticatedRequest } from "../middlewares/isAuthenticated";
 import { search } from "../models/inventory";
 import { inventorySearchSchema } from "../schemas/inventory";
@@ -18,6 +18,7 @@ export const getInventory = async (req: AuthenticatedRequest, res: Response) => 
 
     const userName = req.user!.name;
     const [inventory, totalPages] = await search(userName, params.data);
+    
     successResponse(res, HttpStatus.OK, "", {
         results: inventory,
         totalPages: totalPages

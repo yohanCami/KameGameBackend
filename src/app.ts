@@ -8,6 +8,7 @@ import { cardsRouter } from "./routes/cards";
 import { cartRouter } from "./routes/cart";
 import { packsRouter } from "./routes/packs";
 import { usersRouter } from "./routes/user";
+import { inventoryRouter } from "./routes/inventory";
 import { errorResponse, HttpStatus } from "./utils";
 
 const PORT = process.env.PORT ?? 3000;
@@ -28,6 +29,7 @@ app.use("/user", usersRouter);
 app.use("/cards", cardsRouter);
 app.use("/packs", packsRouter);
 app.use("/cart", isAuthenticated, cartRouter);
+app.use("/inventory", isAuthenticated, inventoryRouter);
 
 app.use(
 	(err: Error, _req: Request, res: express.Response, _next: NextFunction) => {
