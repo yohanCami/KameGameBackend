@@ -13,7 +13,12 @@ import {
 	itemCountUpdateSchema,
 	itemDeleteSchema,
 } from "../schemas/cart";
-import { errorResponse, HttpStatus, successResponse } from "../utils";
+import {
+	errorResponse,
+	HttpStatus,
+	type MaybeSuccess,
+	successResponse,
+} from "../utils";
 
 export const getCart = async (req: AuthenticatedRequest, res: Response) => {
 	const username = req.user!.name;
@@ -39,7 +44,7 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 		return;
 	}
 	const username = req.user!.name;
-	let result: [boolean, { cards: number[]; packs: number[] } | null];
+	let result: MaybeSuccess<{ cards: number[]; packs: number[] }>;
 	try {
 		result = await addItemOrItems(username, params.data);
 	} catch (err) {
@@ -154,7 +159,7 @@ export const clear = async (req: AuthenticatedRequest, res: Response) => {
 
 export const buy = async (req: AuthenticatedRequest, res: Response) => {
 	const username = req.user!.name;
-	let bought: [boolean, string | null];
+	let bought: MaybeSuccess<string>;
 	try {
 		bought = await buyItemsInCart(username);
 	} catch (err) {
@@ -170,14 +175,6 @@ export const buy = async (req: AuthenticatedRequest, res: Response) => {
 	if (bought[0]) {
 		successResponse(res, HttpStatus.OK, "purchase completed");
 	} else {
-		if (bought[1] === null) {
-			errorResponse(
-				res,
-				HttpStatus.BAD_REQUEST,
-				"the cart is empty, nothing to buy",
-			);
-		} else {
-			errorResponse(res, HttpStatus.BAD_REQUEST, bought[1]);
-		}
+		errorResponse(res, HttpStatus.BAD_REQUEST, bought[1]);
 	}
 };

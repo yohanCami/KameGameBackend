@@ -2,6 +2,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { packsTable } from "../db/schema";
 import { searchSchema } from "./search";
+import { getOneSchema as getOneCardSchema } from "./cards";
 
 export const packSelectSchema = createSelectSchema(packsTable);
 
@@ -28,3 +29,9 @@ export const updatePackSchema = createPackSchema
 export type UpdatePackSchema = z.infer<typeof updatePackSchema>;
 
 export type PackSearchSchema = z.infer<typeof packSearchSchema>;
+
+export const addCardsSchema = z.object({
+	cards: z.array(getOneCardSchema.shape.id),
+});
+
+export type AddCardsSchema = z.infer<typeof addCardsSchema>;

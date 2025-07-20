@@ -22,6 +22,7 @@ app.use(
 );
 app.use(morgan("dev"));
 app.use(express.json());
+app.set("json spaces", 2);
 
 app.use("/user", usersRouter);
 app.use("/cards", cardsRouter);

@@ -9,3 +9,6 @@ packsRouter.get("/:id", PacksController.getOne);
 packsRouter.post("/", isAdmin, PacksController.create);
 packsRouter.patch("/:id", isAdmin, PacksController.updateOne);
 packsRouter.delete("/:id", isAdmin, PacksController.deleteOne);
+
+packsRouter.get("/:id/cards", PacksController.getCards);
+packsRouter.post("/:id/cards", isAdmin, PacksController.addCards);

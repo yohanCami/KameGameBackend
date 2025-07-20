@@ -1,5 +1,10 @@
 import type { Response } from "express";
 
+type Success = [true, null];
+type Err<E> = [false, E];
+
+export type MaybeSuccess<E> = Success | Err<E>;
+
 export enum HttpStatus {
 	OK = 200,
 	CREATED = 201,

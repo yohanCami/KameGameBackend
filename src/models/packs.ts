@@ -1,7 +1,7 @@
 // models/packs.ts
 import { db } from "../db";
-import { packsTable } from "../db/schema";
-import { and, count, eq } from "drizzle-orm";
+import { cardsTable, packCardsTable, packsTable } from "../db/schema";
+import { and, count, eq, inArray } from "drizzle-orm";
 import {
 	CreatePackSchema,
 	packSearchSchema,
@@ -9,6 +9,7 @@ import {
 	UpdatePackSchema,
 } from "../schemas/packs";
 import { fullTextSearchSql, withPagination } from "./searchHelper";
+import { MaybeSuccess } from "../utils";
 
 export const search = async (params: PackSearchSchema) => {
 	const safeParams = packSearchSchema.parse(params);
@@ -65,4 +66,42 @@ export const update = async (packId: number, params: UpdatePackSchema) => {
 
 export const deletePackById = async (id: number) => {
 	await db.delete(packsTable).where(eq(packsTable.id, id));
+};
+
+export const getPackCards = async (packId: number) => {
+	// verify the pack exists
+	const dbPack = await db
+		.select({ id: packsTable.id })
+		.from(packsTable)
+		.where(eq(packsTable.id, packId));
+	if (dbPack.length === 0) {
+		return false;
+	}
+
+	const cards = await db.query.packCardsTable.findMany({
+		with: { card: true },
+		where: eq(packCardsTable.packId, packId),
+	});
+
+	return cards.map((c) => c.card);
+};
+
+export const addCardsToPack = async (
+	packId: number,
+	cards: number[],
+): Promise<MaybeSuccess<string>> => {
+	// verify that the cards exist
+	const dbCards = await db
+		.select({ id: cardsTable.id })
+		.from(cardsTable)
+		.where(inArray(cardsTable.id, cards));
+
+	if (dbCards.length !== cards.length) {
+		return [false, "some cards don't exist in the database"];
+	}
+
+	const valuesToInsert = cards.map((cardId) => ({ packId, cardId }));
+
+	await db.insert(packCardsTable).values(valuesToInsert).onConflictDoNothing();
+	return [true, null];
 };

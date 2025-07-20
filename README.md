@@ -680,6 +680,63 @@ curl -X DELETE http://localhost:3000/packs/1 -H 'Authorization: Bearer <token>'
 }
 ```
 
+- `GET /packs/<id>/cards`
+
+**Input:** Espera recibir el ID del pack en la URL
+
+**Ejemplo:**
+
+```sh
+curl http://localhost:3000/packs/2/cards
+```
+
+```json
+{
+  "error": null,
+  "data": [
+    {
+      "id": 97127906,
+      "name": "Alien Shocktrooper",
+      "price": 28999,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/97127906.jpg",
+      "attribute": "EARTH",
+      "stock": 0,
+      "attack": 1900
+    }
+  ],
+  "message": "",
+  "status": 200
+}
+```
+
+- `POST /packs/<id>/cards`
+
+**Input:** Espera recibir el ID del pack en la URL y el ID de las cartas a agregar en el body con el siguiente
+formato:
+
+```typescript
+type AddCardsSchema = {
+    cards: number[];
+}
+```
+
+**Ejemplo:**
+
+```sh
+curl -X POST http://localhost:3000/packs/2/cards -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d '{
+  "cards": [97127906, 99785935]
+  }'
+```
+
+```json
+{
+  "error": null,
+  "data": null,
+  "message": "cards added",
+  "status": 200
+}
+```
+
 ### /cart
 
 Todas las rutas de `/cart` requieren el header `Authorization` con el token del usuario logueado.

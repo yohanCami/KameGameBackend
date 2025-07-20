@@ -19,6 +19,7 @@ import type {
 	OneItemAdd,
 } from "../schemas/cart";
 import * as UserModel from "./user";
+import type { MaybeSuccess } from "../utils";
 
 export const getUserCart = async (username: string) => {
 	const products = await db.query.cartProductsTable.findMany({
@@ -48,7 +49,7 @@ export const getUserCart = async (username: string) => {
 export const addItemOrItems = async (
 	username: string,
 	itemOrItems: ItemAddParams,
-): Promise<[boolean, { cards: number[]; packs: number[] } | null]> => {
+): Promise<MaybeSuccess<{ cards: number[]; packs: number[] }>> => {
 	let items = (itemOrItems as ManyItemsAdd).items;
 	if (items === undefined) {
 		items = [itemOrItems as OneItemAdd];
@@ -125,7 +126,7 @@ export const clearCart = async (username: string) => {
 
 export const buyItemsInCart = async (
 	username: string,
-): Promise<[boolean, string | null]> => {
+): Promise<MaybeSuccess<string>> => {
 	return await db.transaction(async (tx) => {
 		const cartItems = await tx.query.cartProductsTable.findMany({
 			with: {
@@ -196,7 +197,7 @@ export const buyItemsInCart = async (
 		}
 
 		if (cardsToBuy.length === 0) {
-			return [false, null];
+			return [false, "the cart is empty, nothing to buy"];
 		}
 
 		// check if in stock

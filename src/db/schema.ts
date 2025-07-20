@@ -98,7 +98,7 @@ export const packCardsTable = pgTable(
 			.references(() => cardsTable.id)
 			.notNull(),
 		packId: integer()
-			.references(() => cardsTable.id)
+			.references(() => packsTable.id)
 			.notNull(),
 	},
 	(table) => [primaryKey({ columns: [table.cardId, table.packId] })],

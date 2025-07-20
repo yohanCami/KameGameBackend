@@ -5,14 +5,23 @@ import {
 	update,
 	createOne,
 	search,
+	addCardsToPack,
+	getPackCards,
 } from "../models/packs";
 import {
 	createPackSchema,
 	updatePackSchema,
 	getOneSchema,
 	packSearchSchema,
+	addCardsSchema,
 } from "../schemas/packs";
-import { errorResponse, HttpStatus, successResponse } from "../utils";
+import {
+	errorResponse,
+	HttpStatus,
+	MaybeSuccess,
+	successResponse,
+} from "../utils";
+import { CardSelectSchema } from "../schemas/cards";
 
 export const getAll = async (req: Request, res: Response) => {
 	const parsed = packSearchSchema.safeParse(req.query);
@@ -132,4 +141,72 @@ export const deleteOne = async (req: Request, res: Response) => {
 
 	await deletePackById(id);
 	successResponse(res, HttpStatus.OK, "Pack deleted", id);
+};
+
+export const getCards = async (req: Request, res: Response) => {
+	const id = getOneSchema.safeParse(req.params);
+	if (!id.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid add cards to pack params",
+			id.error.issues,
+		);
+		return;
+	}
+
+	let cards: CardSelectSchema[] | false;
+	try {
+		cards = await getPackCards(id.data.id);
+	} catch (err) {
+		console.log("error getting pack cards", err);
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"internal server error",
+		);
+		return;
+	}
+
+	if (cards === false) {
+		errorResponse(res, HttpStatus.BAD_REQUEST, "pack not found");
+		return;
+	}
+
+	successResponse(res, HttpStatus.OK, "", cards);
+};
+
+export const addCards = async (req: Request, res: Response) => {
+	const id = getOneSchema.safeParse(req.params);
+	const params = addCardsSchema.safeParse(req.body);
+	if (!params.success || !id.success) {
+		const issues = params.error?.issues ?? id.error?.issues;
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid add cards to pack params",
+			issues,
+		);
+		return;
+	}
+
+	let result: MaybeSuccess<string>;
+	try {
+		result = await addCardsToPack(id.data.id, params.data.cards);
+	} catch (err) {
+		console.log("error adding cards to pack", err);
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"internal server error",
+		);
+		return;
+	}
+
+	if (result[0]) {
+		successResponse(res, HttpStatus.OK, "cards added");
+		return;
+	}
+
+	errorResponse(res, HttpStatus.BAD_REQUEST, result[1]);
 };
