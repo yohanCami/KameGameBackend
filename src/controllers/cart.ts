@@ -48,11 +48,13 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 	try {
 		result = await addItemOrItems(username, params.data);
 	} catch (err) {
+		const errString = (err instanceof Error) ? err.message : ((typeof err === 'object' && err !== null) ? err.toString() : err)
 		console.log("failed to add item(s):", err);
 		errorResponse(
 			res,
 			HttpStatus.INTERNAL_SERVER_ERROR,
 			"failed to add item(s)",
+			errString
 		);
 		return;
 	}
