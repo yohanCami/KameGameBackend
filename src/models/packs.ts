@@ -51,7 +51,11 @@ export const one = async (id: number) => {
 };
 
 export const createOne = async (params: CreatePackSchema) => {
-	await db.insert(packsTable).values(params);
+	const result = await db
+		.insert(packsTable)
+		.values(params)
+		.returning({ id: packsTable.id });
+	return result[0].id;
 };
 
 export const update = async (packId: number, params: UpdatePackSchema) => {

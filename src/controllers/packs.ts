@@ -79,8 +79,8 @@ export const create = async (req: Request, res: Response) => {
 	}
 
 	try {
-		await createOne(params.data);
-		successResponse(res, HttpStatus.OK, "pack created");
+		const id = await createOne(params.data);
+		successResponse(res, HttpStatus.OK, "pack created", { id });
 	} catch (err) {
 		console.error("failed to create pack", err);
 		errorResponse(

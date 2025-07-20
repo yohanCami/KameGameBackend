@@ -614,19 +614,21 @@ type CreatePack = {
 
 ```sh
 curl -X POST http://localhost:3000/packs -H 'Authorization: Bearer <token>' -H 'Content-Type: application/json' -d '{
-  "name": "Epic Warriors",
-  "price": 8000,
-  "imageUrl": "https://example.com/pack.png",
-  "rarity": "ultra-rare"
-}'
+    "name": "Epic Warriors",
+    "price": 8000,
+    "imageUrl": "https://example.com/pack.png",
+    "rarity": "ULTRA RARE"
+  }'
 ```
 
 ```json
 {
-	"error": null,
-	"data": null,
-	"message": "pack created",
-	"status": 200
+  "error": null,
+  "data": {
+    "id": 5
+  },
+  "message": "pack created",
+  "status": 200
 }
 ```
 
