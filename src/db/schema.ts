@@ -65,6 +65,8 @@ export const packsTable = pgTable(
 		imageUrl: varchar({ length: 255 }).notNull(),
 		rarity: packsRarityEnum().notNull(),
 		discount: real().default(0),
+		stock: integer().notNull().default(0),
+		description: varchar({ length: 100 }),
 	},
 
 	(table) => [

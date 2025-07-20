@@ -602,11 +602,14 @@ curl http://localhost:3000/packs/1
 
 ```ts
 type CreatePack = {
-	name: string
-	price: number
-	imageUrl: string
-	rarity: "COMMON" | "RAR" | "SUPER RARE" | "ULTRA RARE"
-	discount?: number
+    name: string;
+    price: number;
+    imageUrl: string;
+    rarity: "COMMON" | "RARE" | "SUPER RARE" | "ULTRA RARE";
+    id?: number | undefined;
+    discount?: number | null | undefined;
+    stock?: number | undefined;
+    description?: string | null | undefined;
 }
 ```
 

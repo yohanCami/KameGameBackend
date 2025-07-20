@@ -1,0 +1,456 @@
+{
+	"id": "655db9cf-54d5-4c38-81c6-19d0b3fcc6df",
+	"prevId": "fc6f56dd-0ddf-41f5-841d-629b5ce81aa0",
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.cards": {
+			"name": "cards",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "byDefault",
+						"name": "cards_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(60)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"price": {
+					"name": "price",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"image_url": {
+					"name": "image_url",
+					"type": "varchar(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"attribute": {
+					"name": "attribute",
+					"type": "attribute",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"stock": {
+					"name": "stock",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 0
+				},
+				"attack": {
+					"name": "attack",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {
+				"card_name_search_index": {
+					"name": "card_name_search_index",
+					"columns": [
+						{
+							"expression": "to_tsvector('english', \"name\")",
+							"asc": true,
+							"isExpression": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "gin",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.cart_products": {
+			"name": "cart_products",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "always",
+						"name": "cart_products_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"user_name": {
+					"name": "user_name",
+					"type": "varchar(30)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"card_id": {
+					"name": "card_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"pack_id": {
+					"name": "pack_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"quantity": {
+					"name": "quantity",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 1
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"cart_products_user_name_users_name_fk": {
+					"name": "cart_products_user_name_users_name_fk",
+					"tableFrom": "cart_products",
+					"tableTo": "users",
+					"columnsFrom": ["user_name"],
+					"columnsTo": ["name"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"cart_products_card_id_cards_id_fk": {
+					"name": "cart_products_card_id_cards_id_fk",
+					"tableFrom": "cart_products",
+					"tableTo": "cards",
+					"columnsFrom": ["card_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"cart_products_pack_id_packs_id_fk": {
+					"name": "cart_products_pack_id_packs_id_fk",
+					"tableFrom": "cart_products",
+					"tableTo": "packs",
+					"columnsFrom": ["pack_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"unique_cart_product": {
+					"name": "unique_cart_product",
+					"nullsNotDistinct": true,
+					"columns": ["user_name", "card_id", "pack_id"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {
+				"cart_product_check": {
+					"name": "cart_product_check",
+					"value": "(\n\t\t\t\t(\"cart_products\".\"card_id\" is not null and \"cart_products\".\"pack_id\" is null)\n\t\t\t\tor\n\t\t\t\t(\"cart_products\".\"pack_id\" is not null and \"cart_products\".\"card_id\" is null)\n\t\t\t)"
+				}
+			},
+			"isRLSEnabled": false
+		},
+		"public.inventories": {
+			"name": "inventories",
+			"schema": "",
+			"columns": {
+				"user_name": {
+					"name": "user_name",
+					"type": "varchar(30)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"card_id": {
+					"name": "card_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"creation_date": {
+					"name": "creation_date",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"value": {
+					"name": "value",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"amount": {
+					"name": "amount",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 1
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"inventories_user_name_users_name_fk": {
+					"name": "inventories_user_name_users_name_fk",
+					"tableFrom": "inventories",
+					"tableTo": "users",
+					"columnsFrom": ["user_name"],
+					"columnsTo": ["name"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"inventories_card_id_cards_id_fk": {
+					"name": "inventories_card_id_cards_id_fk",
+					"tableFrom": "inventories",
+					"tableTo": "cards",
+					"columnsFrom": ["card_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"inventories_user_name_card_id_pk": {
+					"name": "inventories_user_name_card_id_pk",
+					"columns": ["user_name", "card_id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.pack_cards": {
+			"name": "pack_cards",
+			"schema": "",
+			"columns": {
+				"card_id": {
+					"name": "card_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"pack_id": {
+					"name": "pack_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"pack_cards_card_id_cards_id_fk": {
+					"name": "pack_cards_card_id_cards_id_fk",
+					"tableFrom": "pack_cards",
+					"tableTo": "cards",
+					"columnsFrom": ["card_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"pack_cards_pack_id_packs_id_fk": {
+					"name": "pack_cards_pack_id_packs_id_fk",
+					"tableFrom": "pack_cards",
+					"tableTo": "packs",
+					"columnsFrom": ["pack_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"pack_cards_card_id_pack_id_pk": {
+					"name": "pack_cards_card_id_pack_id_pk",
+					"columns": ["card_id", "pack_id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.packs": {
+			"name": "packs",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "byDefault",
+						"name": "packs_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(60)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"price": {
+					"name": "price",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"image_url": {
+					"name": "image_url",
+					"type": "varchar(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"rarity": {
+					"name": "rarity",
+					"type": "rarity",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"discount": {
+					"name": "discount",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"default": 0
+				},
+				"stock": {
+					"name": "stock",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 0
+				},
+				"description": {
+					"name": "description",
+					"type": "varchar(100)",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {
+				"pack_name_search_index": {
+					"name": "pack_name_search_index",
+					"columns": [
+						{
+							"expression": "to_tsvector('english', \"name\")",
+							"asc": true,
+							"isExpression": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "gin",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.users": {
+			"name": "users",
+			"schema": "",
+			"columns": {
+				"name": {
+					"name": "name",
+					"type": "varchar(30)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"password_hash": {
+					"name": "password_hash",
+					"type": "varchar(100)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"is_admin": {
+					"name": "is_admin",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
+				},
+				"yugi_pesos": {
+					"name": "yugi_pesos",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"default": 0
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		}
+	},
+	"enums": {
+		"public.attribute": {
+			"name": "attribute",
+			"schema": "public",
+			"values": ["DARK", "DIVINE", "EARTH", "FIRE", "LIGHT", "WATER", "WIND"]
+		},
+		"public.rarity": {
+			"name": "rarity",
+			"schema": "public",
+			"values": ["COMMON", "RARE", "SUPER RARE", "ULTRA RARE"]
+		}
+	},
+	"schemas": {},
+	"sequences": {},
+	"roles": {},
+	"policies": {},
+	"views": {},
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	}
+}
