@@ -3,4 +3,4 @@ import * as InventoryController from "../controllers/inventory";
 
 export const inventoryRouter = express();
 
-inventoryRouter.get("/", InventoryController.getInventory)
+inventoryRouter.get("/", InventoryController.getInventory);
