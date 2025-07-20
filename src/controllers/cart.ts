@@ -44,7 +44,7 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 		return;
 	}
 	const username = req.user!.name;
-	let result: MaybeSuccess<{ cards: number[]; packs: number[] }>;
+	let result: boolean;
 	try {
 		result = await addItemOrItems(username, params.data);
 	} catch (err) {
@@ -57,7 +57,7 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 		return;
 	}
 
-	if (result[0]) {
+	if (result) {
 		successResponse(res, HttpStatus.OK, "item(s) added");
 		return;
 	}
@@ -66,9 +66,6 @@ export const addItem = async (req: AuthenticatedRequest, res: Response) => {
 		res,
 		HttpStatus.BAD_REQUEST,
 		"some items don't exist in the database",
-		{
-			itemsNotFound: result[1],
-		},
 	);
 };
 

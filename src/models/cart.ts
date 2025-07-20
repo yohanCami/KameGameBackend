@@ -49,7 +49,7 @@ export const getUserCart = async (username: string) => {
 export const addItemOrItems = async (
 	username: string,
 	itemOrItems: ItemAddParams,
-): Promise<MaybeSuccess<{ cards: number[]; packs: number[] }>> => {
+): Promise<boolean> => {
 	let items = (itemOrItems as ManyItemsAdd).items;
 	if (items === undefined) {
 		items = [itemOrItems as OneItemAdd];
@@ -64,8 +64,8 @@ export const addItemOrItems = async (
 
 	const itemsExistResult = await itemsExist(values);
 
-	if (itemsExistResult.cards.length > 0 || itemsExistResult.packs.length > 0) {
-		return [false, itemsExistResult];
+	if (!itemsExistResult) {
+		return false;
 	}
 
 	await db
@@ -80,7 +80,7 @@ export const addItemOrItems = async (
 			set: { quantity: sql`${cartProductsTable.quantity}+EXCLUDED.quantity` },
 		});
 
-	return [true, null];
+	return true;
 };
 
 export const updateCount = async (
@@ -290,14 +290,8 @@ const itemsExist = async (items: { cardId?: number; packId?: number }[]) => {
 		.from(packsTable)
 		.where(inArray(packsTable.id, packIds));
 
-	const dbCards = new Set(cardsInDB.map((c) => c.id));
-	const dbPacks = new Set(packsInDB.map((c) => c.id));
+	const dbCards = cardsInDB.map((c) => c.id);
+	const dbPacks = packsInDB.map((c) => c.id);
 
-	const itemCards = new Set(cardIds);
-	const itemPacks = new Set(packIds);
-
-	return {
-		cards: Array.from(itemCards.difference(dbCards)),
-		packs: Array.from(itemPacks.difference(dbPacks)),
-	};
+	return cardIds.length === dbCards.length && packIds.length === dbPacks.length;
 };
