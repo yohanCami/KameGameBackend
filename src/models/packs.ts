@@ -105,3 +105,25 @@ export const addCardsToPack = async (
 	await db.insert(packCardsTable).values(valuesToInsert).onConflictDoNothing();
 	return [true, null];
 };
+
+export const removeCardFromPack = async (packId: number, cardId: number) => {
+	// verify that the card exists in this pack
+	const dbCard = await db
+		.select({ cardId: packCardsTable.cardId })
+		.from(packCardsTable)
+		.where(
+			and(eq(packCardsTable.packId, packId), eq(packCardsTable.cardId, cardId)),
+		);
+
+	if (dbCard.length === 0) {
+		return false;
+	}
+
+	await db
+		.delete(packCardsTable)
+		.where(
+			and(eq(packCardsTable.packId, packId), eq(packCardsTable.cardId, cardId)),
+		);
+
+	return true;
+};

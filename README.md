@@ -737,6 +737,25 @@ curl -X POST http://localhost:3000/packs/2/cards -H 'Authorization: Bearer <toke
 }
 ```
 
+- `DELETE /packs/<id>/cards/<cardId>`
+
+**Input:** Espera recibir el ID de del pack y el ID de la carta en la URL
+
+**Ejemplo:**
+
+```sh
+curl -X DELETE http://localhost:3000/packs/2/cards/12436646 -H 'Authorization: Bearer <token>'
+```
+
+```json
+{
+  "error": null,
+  "data": null,
+  "message": "card deleted",
+  "status": 200
+}
+```
+
 ### /cart
 
 Todas las rutas de `/cart` requieren el header `Authorization` con el token del usuario logueado.

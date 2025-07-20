@@ -12,3 +12,4 @@ packsRouter.delete("/:id", isAdmin, PacksController.deleteOne);
 
 packsRouter.get("/:id/cards", PacksController.getCards);
 packsRouter.post("/:id/cards", isAdmin, PacksController.addCards);
+packsRouter.delete("/:id/cards/:cardId", isAdmin, PacksController.removeCard);

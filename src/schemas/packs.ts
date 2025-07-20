@@ -35,3 +35,8 @@ export const addCardsSchema = z.object({
 });
 
 export type AddCardsSchema = z.infer<typeof addCardsSchema>;
+
+export const removeCardSchema = z.object({
+	id: getOneCardSchema.shape.id,
+	cardId: getOneCardSchema.shape.id,
+});

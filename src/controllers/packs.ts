@@ -7,6 +7,7 @@ import {
 	search,
 	addCardsToPack,
 	getPackCards,
+	removeCardFromPack,
 } from "../models/packs";
 import {
 	createPackSchema,
@@ -14,6 +15,7 @@ import {
 	getOneSchema,
 	packSearchSchema,
 	addCardsSchema,
+	removeCardSchema,
 } from "../schemas/packs";
 import {
 	errorResponse,
@@ -149,7 +151,7 @@ export const getCards = async (req: Request, res: Response) => {
 		errorResponse(
 			res,
 			HttpStatus.BAD_REQUEST,
-			"invalid add cards to pack params",
+			"invalid get pack cards params",
 			id.error.issues,
 		);
 		return;
@@ -209,4 +211,37 @@ export const addCards = async (req: Request, res: Response) => {
 	}
 
 	errorResponse(res, HttpStatus.BAD_REQUEST, result[1]);
+};
+
+export const removeCard = async (req: Request, res: Response) => {
+	const params = removeCardSchema.safeParse(req.params);
+	if (!params.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid remove cards from pack params",
+			params.error.issues,
+		);
+		return;
+	}
+
+	let result: boolean;
+	try {
+		result = await removeCardFromPack(params.data.id, params.data.cardId);
+	} catch (err) {
+		console.log("error removing card from pack", err);
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"internal server error",
+		);
+		return;
+	}
+
+	if (result) {
+		successResponse(res, HttpStatus.OK, "card deleted");
+		return;
+	}
+
+	errorResponse(res, HttpStatus.BAD_REQUEST, "card not found in this pack");
 };
