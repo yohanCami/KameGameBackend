@@ -229,20 +229,24 @@ export const buyItemsInCart = async (
 		);
 
 		// subtract quantity from packs stock
-		await updateMany(
-			tx,
-			packsTable,
-			cartPacks.map((item) => ({
-				id: item.packId as number,
-				quantityToBuy: item.quantity,
-			})),
-		);
+		if (cartPacks.length > 0) {
+			await updateMany(
+				tx,
+				packsTable,
+				cartPacks.map((item) => ({
+					id: item.packId as number,
+					quantityToBuy: item.quantity,
+				})),
+			);
+		}
 
 		// subtract total from user's balance
-		await tx
-			.update(usersTable)
-			.set({ yugiPesos: sql`${usersTable.yugiPesos} - ${totalPrice}` })
-			.where(eq(usersTable.name, username));
+		if (cartCards.length > 0) {
+			await tx
+				.update(usersTable)
+				.set({ yugiPesos: sql`${usersTable.yugiPesos} - ${totalPrice}` })
+				.where(eq(usersTable.name, username));
+		}
 
 		// add cards to user's inventory
 		const inventoryValues = [];
