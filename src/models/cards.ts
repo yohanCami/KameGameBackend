@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, sql, gt } from "drizzle-orm";
 import { db } from "../db";
 import { cardsTable } from "../db/schema";
 import type {
@@ -45,4 +45,16 @@ export const update = async (cardId: number, params: UpdateCard) => {
 		.where(eq(cardsTable.id, cardId))
 		.returning({ id: cardsTable.id });
 	return changed.length > 0;
+};
+
+// get randoms cards for ai's deck on battle
+export const randomCards = async (num: number) => {
+	const cards = await db
+	.select()
+	.from(cardsTable)
+	.where(gt(cardsTable.stock, 0))
+	.orderBy(sql`RANDOM()`)
+	.limit(num);
+
+	return cards;
 };

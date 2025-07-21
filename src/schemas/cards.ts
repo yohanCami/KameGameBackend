@@ -30,3 +30,9 @@ export const updateCardSchema = createCardSchema
 	);
 
 export type UpdateCard = z.infer<typeof updateCardSchema>;
+
+export const getRandomSchema = z.object({
+	num: z.coerce.number().int().positive().max(50).default(5)
+});
+
+export type GetRandom = z.infer<typeof getRandomSchema>

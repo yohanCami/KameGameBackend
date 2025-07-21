@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
-import { createOne, one, search, update } from "../models/cards";
+import { createOne, one, randomCards, search, update } from "../models/cards";
 import {
 	cardSearchSchema,
 	createCardSchema,
 	getOneSchema,
+	getRandomSchema,
 	updateCardSchema,
 } from "../schemas/cards";
 import { errorResponse, HttpStatus, successResponse } from "../utils";
@@ -114,4 +115,29 @@ export const updateOne = async (req: Request, res: Response) => {
 
 export const deleteOne = (req: Request, res: Response) => {
 	res.send("delete card");
+};
+
+export const getRandom = async (req: Request, res: Response) => {
+	const params = getRandomSchema.safeParse(req.query);
+	if (!params.success) {
+		errorResponse(
+			res,
+			HttpStatus.BAD_REQUEST,
+			"invalid num parameter",
+			params.error.issues
+		);
+		return;
+	}
+
+	try {
+		const cards = await randomCards(params.data.num);	
+		successResponse(res, HttpStatus.OK, "", cards);
+	} catch (err) {
+		console.error("failed to get random cards: ", err);
+		errorResponse(
+			res,
+			HttpStatus.INTERNAL_SERVER_ERROR,
+			"failed to get random cards"
+		);
+	}
 };

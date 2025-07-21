@@ -5,6 +5,7 @@ import { isAdmin } from "../middlewares/isAdmin";
 export const cardsRouter = express();
 
 cardsRouter.get("/", CardsController.getAll);
+cardsRouter.get("/random", CardsController.getRandom);
 cardsRouter.get("/:id", CardsController.getOne);
 cardsRouter.post("/", isAdmin, CardsController.create);
 cardsRouter.patch("/:id", isAdmin, CardsController.updateOne);

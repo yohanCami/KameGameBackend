@@ -342,7 +342,7 @@ Con todos los parámetros:
 curl 'http://localhost:3000/cards?page=2&itemsPerPage=1&itemName=king&cardAttribute=EARTH'
 ```
 
-```
+```json
 {
   "error": null,
   "data": {
@@ -423,6 +423,116 @@ curl http://localhost:3000/cards/123
 	"data": null,
 	"message": "",
 	"status": 200
+}
+```
+
+- `GET /cards/random`
+
+**Input:** Puede recibir el parámetro `num` en la URL (número de cartas aleatorias a obtener, máximo 50, por defecto 5).
+
+**Ejemplos:**
+
+Sin parámetros:
+
+```sh
+curl http://localhost:3000/cards/random
+```
+
+```json
+{
+  "error": null,
+  "data": [
+    {
+      "id": 68638985,
+      "name": "Slime Toad",
+      "price": 24000,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/68638985.jpg",
+      "attribute": "WATER",
+      "stock": 11,
+      "attack": 700
+    },
+    {
+      "id": 72076281,
+      "name": "Bat",
+      "price": 72226,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/72076281.jpg",
+      "attribute": "WIND",
+      "stock": 28,
+      "attack": 300
+    },
+    {
+      "id": 92125819,
+      "name": "Noble Knight Artorigus",
+      "price": 31000,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/92125819.jpg",
+      "attribute": "LIGHT",
+      "stock": 23,
+      "attack": 1800
+    },
+    {
+      "id": 49218300,
+      "name": "Sorcerer of the Doomed",
+      "price": 2000,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/49218300.jpg",
+      "attribute": "DARK",
+      "stock": 21,
+      "attack": 1450
+    },
+    {
+      "id": 72269672,
+      "name": "Stone Ghost",
+      "price": 129080,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/72269672.jpg",
+      "attribute": "EARTH",
+      "stock": 47,
+      "attack": 1200
+    }
+  ],
+  "message": "",
+  "status": 200
+}
+```
+
+Con num
+
+```sh
+curl http://localhost:3000/cards/random?num=3
+```
+
+```json
+{
+  "error": null,
+  "data": [
+    {
+      "id": 2830619,
+      "name": "Flame Viper",
+      "price": 49000,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/2830619.jpg",
+      "attribute": "EARTH",
+      "stock": 1,
+      "attack": 400
+    },
+    {
+      "id": 18108166,
+      "name": "Mystery Shell Dragon",
+      "price": 10000,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/18108166.jpg",
+      "attribute": "DARK",
+      "stock": 20,
+      "attack": 2000
+    },
+    {
+      "id": 93221206,
+      "name": "Ancient Elf",
+      "price": 6000,
+      "imageUrl": "https://ygocards.blob.core.windows.net/cards/93221206.jpg",
+      "attribute": "LIGHT",
+      "stock": 35,
+      "attack": 1450
+    }
+  ],
+  "message": "",
+  "status": 200
 }
 ```
 
