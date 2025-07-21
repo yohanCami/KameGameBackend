@@ -131,7 +131,7 @@ export const getRandom = async (req: Request, res: Response) => {
 
 	try {
 		const cards = await randomCards(params.data.num);	
-		successResponse(res, HttpStatus.OK, "", cards);
+		successResponse(res, HttpStatus.OK, "", {results: cards});
 	} catch (err) {
 		console.error("failed to get random cards: ", err);
 		errorResponse(
