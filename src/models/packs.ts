@@ -13,7 +13,7 @@ import { fullTextSearchSql, withPagination } from "./searchHelper";
 import type { MaybeSuccess } from "../utils";
 import { CardSelectSchema } from "../schemas/cards";
 
-type PackInSearchResponse = PackSelectSchema & { cards: CardSelectSchema[]};
+type PackInResponse = PackSelectSchema & { cards: CardSelectSchema[]};
 
 export const search = async (params: PackSearchSchema) => {
 	const safeParams = packSearchSchema.parse(params);
@@ -45,7 +45,7 @@ export const search = async (params: PackSearchSchema) => {
 		packsCount[0].count / (safeParams.itemsPerPage || 20),
 	);
 
-	const packs: Record<number, PackInSearchResponse> = {};
+	const packs: Record<number, PackInResponse> = {};
 	for (const item of packsWithCards) {
 		if (packs[item.packId] !== undefined) {
 			packs[item.packId].cards.push(item.card)
@@ -59,12 +59,22 @@ export const search = async (params: PackSearchSchema) => {
 };
 
 export const one = async (id: number) => {
-	const result = await db
-		.select()
-		.from(packsTable)
-		.where(eq(packsTable.id, id));
+	const packWithCards = await db.query.packCardsTable.findMany({
+		with: {
+			pack: true,
+			card: true
+		},
+		where: eq(packCardsTable.packId, id)
+	});
 
-	return result[0] ?? null;
+	if (packWithCards.length === 0) {
+		return null
+	}
+
+	const pack: PackInResponse = {...packWithCards[0].pack, cards: []}
+	pack.cards.push(...packWithCards.map(p => p.card))
+
+	return pack ?? null;
 };
 
 export const createOne = async (params: CreatePackSchema) => {
