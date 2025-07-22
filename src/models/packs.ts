@@ -6,10 +6,14 @@ import {
 	type CreatePackSchema,
 	packSearchSchema,
 	type PackSearchSchema,
+	PackSelectSchema,
 	type UpdatePackSchema,
 } from "../schemas/packs";
 import { fullTextSearchSql, withPagination } from "./searchHelper";
 import type { MaybeSuccess } from "../utils";
+import { CardSelectSchema } from "../schemas/cards";
+
+type PackInSearchResponse = PackSelectSchema & { cards: CardSelectSchema[]};
 
 export const search = async (params: PackSearchSchema) => {
 	const safeParams = packSearchSchema.parse(params);
@@ -22,12 +26,15 @@ export const search = async (params: PackSearchSchema) => {
 			: undefined,
 	);
 
-	const query = db.select().from(packsTable).where(whereCondition).$dynamic();
-	const packs = await withPagination(
-		query,
-		safeParams.page,
-		safeParams.itemsPerPage,
-	);
+	const packsWithCards = await db.query.packCardsTable.findMany({
+		with: {
+			pack: true,
+			card: true,
+		},
+		where: whereCondition,
+		limit: safeParams.itemsPerPage,
+		offset: (safeParams.page - 1) * safeParams.itemsPerPage
+	})
 
 	const packsCount = await db
 		.select({ count: count() })
@@ -38,7 +45,17 @@ export const search = async (params: PackSearchSchema) => {
 		packsCount[0].count / (safeParams.itemsPerPage || 20),
 	);
 
-	return [packs, totalPages];
+	const packs: Record<number, PackInSearchResponse> = {};
+	for (const item of packsWithCards) {
+		if (packs[item.packId] !== undefined) {
+			packs[item.packId].cards.push(item.card)
+			continue;
+		}
+
+		packs[item.packId] = {...item.pack, cards: [item.card]};
+	}
+
+	return [Object.values(packs), totalPages];
 };
 
 export const one = async (id: number) => {
